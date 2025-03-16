@@ -6,11 +6,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ErinnerungService {
-	Erinnerung create(String name, LocalDate ersterTermin, Wiederholung wiederholung, LocalDate bezugsdatum);
+	Erinnerung aktualsiereErinnerung(Erinnerung erinnerung);
 
-	List<Erinnerung> findAllOrderedByNaechsterTerminAscending();
+	Erinnerung aktualisiereNaechsterTermin(Erinnerung erinnerung);
 
-	Erinnerung update(Erinnerung erinnerung);
+	Erinnerung erzeugeErinnerung(String name, LocalDate ersterTermin, Wiederholung wiederholung, LocalDate bezugsdatum);
 
-	void remove(Erinnerung erinnerung);
+	List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin();
+
+	void loescheErinnerung(Erinnerung erinnerung);
 }
