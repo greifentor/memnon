@@ -4,5 +4,5 @@ import de.ollie.memnon.core.model.Wiederholung;
 import java.util.List;
 
 public interface WiederholungService {
-	List<Wiederholung> findAll();
+	List<Wiederholung> holeAlleWiederholungenAufsteigendSortiertNachName();
 }
