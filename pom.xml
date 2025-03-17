@@ -62,6 +62,7 @@
 		<module>base-lib</module>
 		<module>service</module>
 		<module>service-interface</module>
+		<module>shell</module>
 	</modules>
 	<dependencies>
 		<dependency>
