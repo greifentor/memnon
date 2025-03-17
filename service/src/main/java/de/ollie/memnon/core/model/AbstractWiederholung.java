@@ -1,9 +1,11 @@
 package de.ollie.memnon.core.model;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 abstract class AbstractWiederholung implements Wiederholung {
 
-	private String name;
+	private final String name;
 }

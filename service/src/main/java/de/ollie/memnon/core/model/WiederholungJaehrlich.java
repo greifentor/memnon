@@ -6,6 +6,10 @@ import java.time.LocalDate;
 
 public class WiederholungJaehrlich extends AbstractWiederholung {
 
+	public WiederholungJaehrlich() {
+		super("Jährlich");
+	}
+
 	@Override
 	public LocalDate berechneNaechsterTermin(Erinnerung erinnerung) {
 		ensure(erinnerung != null, "erinnerung cannot be null!");

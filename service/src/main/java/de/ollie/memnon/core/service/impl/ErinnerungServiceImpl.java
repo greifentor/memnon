@@ -6,12 +6,11 @@ import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
-import jakarta.inject.Named;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
-@Named
+// @Named
 @RequiredArgsConstructor
 class ErinnerungServiceImpl implements ErinnerungService {
 
