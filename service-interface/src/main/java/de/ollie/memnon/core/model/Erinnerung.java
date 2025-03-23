@@ -1,6 +1,7 @@
 package de.ollie.memnon.core.model;
 
 import java.time.LocalDate;
+import java.util.UUID;
 import lombok.Data;
 import lombok.Generated;
 import lombok.experimental.Accessors;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 @Generated
 public class Erinnerung {
 
+	private UUID id;
 	private String name;
 	private LocalDate bezugsdatum;
 	private LocalDate naechsterTermin;

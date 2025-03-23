@@ -6,8 +6,10 @@ import java.time.LocalDate;
 
 public class WiederholungJaehrlich extends AbstractWiederholung {
 
+	public static final String NAME = "Jährlich";
+
 	public WiederholungJaehrlich() {
-		super("Jährlich");
+		super(NAME);
 	}
 
 	@Override

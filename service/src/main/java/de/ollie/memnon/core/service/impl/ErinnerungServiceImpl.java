@@ -6,11 +6,13 @@ import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
+import jakarta.inject.Named;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
-// @Named
+@Named
 @RequiredArgsConstructor
 class ErinnerungServiceImpl implements ErinnerungService {
 
@@ -35,8 +37,14 @@ class ErinnerungServiceImpl implements ErinnerungService {
 		Wiederholung wiederholung,
 		LocalDate bezugsdatum
 	) {
-		// TODO Auto-generated method stub
-		return null;
+		return erinnerungPersistencePort.save(
+			new Erinnerung()
+				.setBezugsdatum(bezugsdatum)
+				.setId(UUID.randomUUID())
+				.setNaechsterTermin(ersterTermin)
+				.setName(name)
+				.setWiederholung(wiederholung)
+		);
 	}
 
 	@Override

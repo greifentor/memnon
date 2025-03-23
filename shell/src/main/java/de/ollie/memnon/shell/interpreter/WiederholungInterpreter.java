@@ -12,7 +12,7 @@ public class WiederholungInterpreter {
 	private final ListWiederholungCommand listWiederholungCommand;
 
 	@ShellMethod(value = "Lists all Wiederholung objects", key = { "list-wiederholungen", "lw" })
-	public String add() {
+	public String list() {
 		return listWiederholungCommand.run();
 	}
 }

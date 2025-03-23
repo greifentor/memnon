@@ -53,4 +53,13 @@ class WiederholungJaehrlichTest {
 			assertEquals(NAECHSTER_TERMIN.plusYears(1), returned);
 		}
 	}
+
+	@Nested
+	class getName {
+
+		@Test
+		void returnsTheCorrectName() {
+			assertEquals(WiederholungJaehrlich.NAME, unitUnderTest.getName());
+		}
+	}
 }
