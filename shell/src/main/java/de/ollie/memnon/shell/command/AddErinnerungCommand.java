@@ -1,5 +1,7 @@
 package de.ollie.memnon.shell.command;
 
+import static de.ollie.memnon.util.Check.ensure;
+
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
@@ -17,6 +19,8 @@ public class AddErinnerungCommand {
 	private final WiederholungService wiederholungService;
 
 	public String run(String name, LocalDate ersterTermin, LocalDate bezugsdatum) {
+		ensure(ersterTermin != null, "erster termin cannot be null!");
+		ensure(name != null, "name cannot be null!");
 		Wiederholung wiederholung = wiederholungService.holeWiederholungMitNamen(WiederholungJaehrlich.NAME).orElse(null);
 		Erinnerung erzeugteErinnerung = erinnerungService.erzeugeErinnerung(name, ersterTermin, wiederholung, bezugsdatum);
 		return (
