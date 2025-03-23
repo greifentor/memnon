@@ -9,7 +9,6 @@ import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import jakarta.inject.Named;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
 @Named
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 class ErinnerungServiceImpl implements ErinnerungService {
 
 	private final ErinnerungPersistencePort erinnerungPersistencePort;
+	private final UUIDProvider uuidProvider;
 
 	@Override
 	public Erinnerung aktualsiereErinnerung(Erinnerung erinnerung) {
@@ -37,10 +37,12 @@ class ErinnerungServiceImpl implements ErinnerungService {
 		Wiederholung wiederholung,
 		LocalDate bezugsdatum
 	) {
+		ensure(ersterTermin != null, "erster termin cannot be null!");
+		ensure(name != null, "name cannot be null!");
 		return erinnerungPersistencePort.save(
 			new Erinnerung()
 				.setBezugsdatum(bezugsdatum)
-				.setId(UUID.randomUUID())
+				.setId(uuidProvider.create())
 				.setNaechsterTermin(ersterTermin)
 				.setName(name)
 				.setWiederholung(wiederholung)
@@ -56,6 +58,5 @@ class ErinnerungServiceImpl implements ErinnerungService {
 	@Override
 	public void loescheErinnerung(Erinnerung erinnerung) {
 		// TODO Auto-generated method stub
-
 	}
 }

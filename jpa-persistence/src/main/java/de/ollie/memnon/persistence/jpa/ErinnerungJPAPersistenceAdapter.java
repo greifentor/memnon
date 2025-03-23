@@ -1,9 +1,10 @@
 package de.ollie.memnon.persistence.jpa;
 
+import static de.ollie.memnon.util.Check.ensure;
+
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
-import de.ollie.memnon.persistence.jpa.entity.ErinnerungDBO;
 import de.ollie.memnon.persistence.jpa.mapper.ErinnerungDBOMapper;
 import de.ollie.memnon.persistence.jpa.repository.ErinnerungDBORepository;
 import jakarta.inject.Named;
@@ -19,10 +20,7 @@ public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePor
 
 	@Override
 	public Erinnerung save(Erinnerung erinnerung) {
-		System.out.println(mapper.toDbo(erinnerung));
-		ErinnerungDBO dbo = repository.save(mapper.toDbo(erinnerung));
-		System.out.println(dbo);
-		System.out.println(mapper.toModel(dbo, wiederholungService));
+		ensure(erinnerung != null, "erinnerung cannot be null!");
 		return mapper.toModel(repository.save(mapper.toDbo(erinnerung)), wiederholungService);
 	}
 }

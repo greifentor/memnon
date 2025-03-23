@@ -1,7 +1,6 @@
 package de.ollie.memnon.core.service.impl;
 
 import de.ollie.memnon.core.model.Wiederholung;
-import de.ollie.memnon.core.model.WiederholungJaehrlich;
 import de.ollie.memnon.core.service.WiederholungService;
 import jakarta.inject.Named;
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.Optional;
 @Named
 class WiederholungServiceImpl implements WiederholungService {
 
-	public static final Map<String, Wiederholung> WIEDERHOLUNGEN = Map.of(
-		WiederholungJaehrlich.NAME,
-		new WiederholungJaehrlich()
+	static final Map<String, Wiederholung> WIEDERHOLUNGEN = Map.of(
+		WIEDERHOLUNG_JAEHRLICH.getName(),
+		WIEDERHOLUNG_JAEHRLICH
 	);
 
 	@Override

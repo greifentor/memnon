@@ -2,6 +2,7 @@ package de.ollie.memnon.core.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
@@ -35,5 +36,17 @@ class WiederholungServiceImplTest {
 			// Check
 			assertEquals(expected, returned);
 		}
+	}
+
+	@Nested
+	class holeWiederholungMitNamen_String {
+
+		@Test
+		void returnsAnEmptyOptional_passingANonExistingName() {
+			assertTrue(unitUnderTest.holeWiederholungMitNamen(";op").isEmpty());
+		}
+
+		@Test
+		void returnsTheCorrectWiederHolung_passingNameJaehrlich() {}
 	}
 }
