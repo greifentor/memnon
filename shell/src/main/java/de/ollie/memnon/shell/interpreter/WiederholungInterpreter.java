@@ -13,6 +13,6 @@ public class WiederholungInterpreter {
 
 	@ShellMethod(value = "Lists all Wiederholung objects", key = { "list-wiederholungen", "lw" })
 	public String list() {
-		return listWiederholungCommand.run();
+		return listWiederholungCommand.run(System.out);
 	}
 }
