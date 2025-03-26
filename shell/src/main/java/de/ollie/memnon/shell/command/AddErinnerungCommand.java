@@ -2,7 +2,7 @@ package de.ollie.memnon.shell.command;
 
 import static de.ollie.memnon.util.Check.ensure;
 
-import de.ollie.memnon.core.model.Erinnerung;
+import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
 import de.ollie.memnon.core.service.ErinnerungService;
@@ -22,15 +22,12 @@ public class AddErinnerungCommand {
 		ensure(ersterTermin != null, "erster termin cannot be null!");
 		ensure(name != null, "name cannot be null!");
 		Wiederholung wiederholung = wiederholungService.holeWiederholungMitNamen(WiederholungJaehrlich.NAME).orElse(null);
-		Erinnerung erzeugteErinnerung = erinnerungService.erzeugeErinnerung(name, ersterTermin, wiederholung, bezugsdatum);
-		return (
-			"Erinnerung (" +
-			erzeugteErinnerung.getName() +
-			" - " +
-			erzeugteErinnerung.getNaechsterTermin() +
-			" - " +
-			(erzeugteErinnerung.getWiederholung() != null ? erzeugteErinnerung.getWiederholung().getName() : "n/a") +
-			")"
+		ErinnerungId erzeugteErinnerungId = erinnerungService.erzeugeErinnerung(
+			name,
+			ersterTermin,
+			wiederholung,
+			bezugsdatum
 		);
+		return ("Erinnerung (" + erzeugteErinnerungId.getUuid() + ")");
 	}
 }

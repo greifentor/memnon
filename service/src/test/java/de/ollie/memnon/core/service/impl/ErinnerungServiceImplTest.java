@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
+import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
@@ -27,6 +28,12 @@ class ErinnerungServiceImplTest {
 	private static final UUID UID = UUID.randomUUID();
 
 	@Mock
+	private ErinnerungId erinnerungId;
+
+	@Mock
+	private ErinnerungId erinnerungIdReturned;
+
+	@Mock
 	private Erinnerung erinnerungPassed;
 
 	@Mock
@@ -42,30 +49,11 @@ class ErinnerungServiceImplTest {
 	private ErinnerungServiceImpl unitUnderTest;
 
 	@Nested
-	class aktualsiereErinnerung_Erinnerung {
-
-		@Test
-		void throwsAnException_passingANullValueAsErinnerung() {
-			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.aktualsiereErinnerung(null));
-		}
-
-		@Test
-		void returnsTheUpdatedErinnerung() {
-			// Prepare
-			when(erinnerungPersistencePort.save(erinnerungPassed)).thenReturn(erinnerungReturned);
-			// Run
-			Erinnerung returned = unitUnderTest.aktualsiereErinnerung(erinnerungPassed);
-			// Check
-			assertEquals(erinnerungReturned, returned);
-		}
-	}
-
-	@Nested
 	class aktualisiereNaechsterTermin_Erinnerung {
 
 		@Test
 		void t() {
-			assertNull(unitUnderTest.aktualisiereNaechsterTermin(erinnerungPassed));
+			assertNull(unitUnderTest.aktualisiereNaechsterTermin(erinnerungId));
 		}
 	}
 
@@ -94,21 +82,22 @@ class ErinnerungServiceImplTest {
 			// Prepare
 			Erinnerung newErinnerung = new Erinnerung()
 				.setBezugsdatum(BEZUGSDATUM)
-				.setId(UID)
+				.setId(new ErinnerungId(UID))
 				.setNaechsterTermin(ERSTER_TERMIN)
 				.setName(NAME)
 				.setWiederholung(WiederholungService.WIEDERHOLUNG_JAEHRLICH);
-			when(erinnerungPersistencePort.save(newErinnerung)).thenReturn(newErinnerung);
+			when(erinnerungPersistencePort.save(newErinnerung)).thenReturn(erinnerungReturned);
+			when(erinnerungReturned.getId()).thenReturn(erinnerungIdReturned);
 			when(uuidProvider.create()).thenReturn(UID);
 			// Run
-			Erinnerung returned = unitUnderTest.erzeugeErinnerung(
+			ErinnerungId returned = unitUnderTest.erzeugeErinnerung(
 				NAME,
 				ERSTER_TERMIN,
 				WiederholungService.WIEDERHOLUNG_JAEHRLICH,
 				BEZUGSDATUM
 			);
 			// Check
-			assertEquals(newErinnerung, returned);
+			assertEquals(erinnerungIdReturned, returned);
 		}
 	}
 
@@ -126,7 +115,7 @@ class ErinnerungServiceImplTest {
 
 		@Test
 		void doesNothing() {
-			unitUnderTest.loescheErinnerung(erinnerungPassed);
+			unitUnderTest.loescheErinnerung(erinnerungId);
 			verifyNoInteractions(erinnerungPassed, erinnerungPersistencePort, erinnerungReturned, uuidProvider);
 		}
 	}
