@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 
 @Named
-class WiederholungServiceImpl implements WiederholungService {
+class WiederholungServiceImpl implements WiederholungService { // NO_UCD
 
-	static final Map<String, Wiederholung> WIEDERHOLUNGEN = Map.of(
+	private static final Map<String, Wiederholung> WIEDERHOLUNGEN = Map.of(
 		WIEDERHOLUNG_JAEHRLICH.getName(),
 		WIEDERHOLUNG_JAEHRLICH
 	);

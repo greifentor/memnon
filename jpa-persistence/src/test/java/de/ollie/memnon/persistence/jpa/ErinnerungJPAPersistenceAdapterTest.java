@@ -9,6 +9,7 @@ import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.persistence.jpa.entity.ErinnerungDBO;
 import de.ollie.memnon.persistence.jpa.mapper.ErinnerungDBOMapper;
 import de.ollie.memnon.persistence.jpa.repository.ErinnerungDBORepository;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,22 @@ class ErinnerungJPAPersistenceAdapterTest {
 
 	@InjectMocks
 	private ErinnerungJPAPersistenceAdapter unitUnderTest;
+
+	@Nested
+	class findAllOrderedByNaechsterTerminAsc {
+
+		@Test
+		void returnsACorrectList() {
+			// Prepare
+			List<Erinnerung> expected = List.of(erinnerungOut);
+			when(mapper.toModel(erinnerungDboOut, wiederholungService)).thenReturn(erinnerungOut);
+			when(repository.findAll()).thenReturn(List.of(erinnerungDboOut));
+			// Run
+			List<Erinnerung> returned = unitUnderTest.findAllOrderedByNaechsterTerminAsc();
+			// Check
+			assertEquals(expected, returned);
+		}
+	}
 
 	@Nested
 	class save_Erinnerung {

@@ -13,8 +13,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @Named
-@RequiredArgsConstructor
-class ErinnerungServiceImpl implements ErinnerungService {
+@RequiredArgsConstructor // NO_UCD
+class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	private final ErinnerungPersistencePort erinnerungPersistencePort;
 	private final UUIDProvider uuidProvider;
@@ -48,8 +48,7 @@ class ErinnerungServiceImpl implements ErinnerungService {
 
 	@Override
 	public List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin() {
-		// TODO Auto-generated method stub
-		return null;
+		return erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
 	}
 
 	@Override

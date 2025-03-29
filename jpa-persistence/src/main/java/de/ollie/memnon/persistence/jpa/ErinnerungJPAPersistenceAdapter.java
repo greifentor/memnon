@@ -8,11 +8,12 @@ import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import de.ollie.memnon.persistence.jpa.mapper.ErinnerungDBOMapper;
 import de.ollie.memnon.persistence.jpa.repository.ErinnerungDBORepository;
 import jakarta.inject.Named;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @Named
-@RequiredArgsConstructor
-public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePort {
+@RequiredArgsConstructor // NO_UCD
+public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePort { // NO_UCD
 
 	private final ErinnerungDBOMapper mapper;
 	private final ErinnerungDBORepository repository;
@@ -22,5 +23,15 @@ public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePor
 	public Erinnerung save(Erinnerung erinnerung) {
 		ensure(erinnerung != null, "erinnerung cannot be null!");
 		return mapper.toModel(repository.save(mapper.toDbo(erinnerung)), wiederholungService);
+	}
+
+	@Override
+	public List<Erinnerung> findAllOrderedByNaechsterTerminAsc() {
+		return repository
+			.findAll()
+			.stream()
+			.map(dbo -> mapper.toModel(dbo, wiederholungService))
+			.sorted((e0, e1) -> e0.toString().compareTo(e1.toString()))
+			.toList();
 	}
 }

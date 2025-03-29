@@ -2,6 +2,7 @@ package de.ollie.memnon.core.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -11,6 +12,7 @@ import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -105,8 +107,12 @@ class ErinnerungServiceImplTest {
 	class holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin {
 
 		@Test
-		void t() {
-			assertNull(unitUnderTest.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin());
+		void callsTheErinnerungPersistencePortMethodCorrectly() {
+			// Prepare
+			List<Erinnerung> l = List.of();
+			when(erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc()).thenReturn(l);
+			// Run & Check
+			assertSame(l, unitUnderTest.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin());
 		}
 	}
 
