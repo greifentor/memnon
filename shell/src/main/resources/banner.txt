@@ -7,7 +7,7 @@
  |_|  |_|\___|_| |_| |_|_| \_|\___/|_| \_|
                                           
                                           
-Version @project.version
+Version @project.version@
 
 starting ...
 
