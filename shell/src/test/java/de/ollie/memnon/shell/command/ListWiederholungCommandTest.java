@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Wiederholung;
-import de.ollie.memnon.core.service.OutputManager;
 import de.ollie.memnon.core.service.WiederholungService;
+import de.ollie.memnon.shell.OutputManager;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

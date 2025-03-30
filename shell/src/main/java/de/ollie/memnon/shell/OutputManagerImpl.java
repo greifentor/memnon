@@ -1,6 +1,5 @@
-package de.ollie.memnon.core.service.impl;
+package de.ollie.memnon.shell;
 
-import de.ollie.memnon.core.service.OutputManager;
 import jakarta.inject.Named;
 import java.io.PrintStream;
 

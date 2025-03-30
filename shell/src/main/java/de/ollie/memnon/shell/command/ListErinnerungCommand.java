@@ -2,7 +2,7 @@ package de.ollie.memnon.shell.command;
 
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.service.ErinnerungService;
-import de.ollie.memnon.core.service.OutputManager;
+import de.ollie.memnon.shell.OutputManager;
 import jakarta.inject.Named;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

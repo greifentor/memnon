@@ -1,8 +1,9 @@
-package de.ollie.memnon.core.service.impl;
+package de.ollie.memnon.shell;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import de.ollie.memnon.shell.OutputManagerImpl;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

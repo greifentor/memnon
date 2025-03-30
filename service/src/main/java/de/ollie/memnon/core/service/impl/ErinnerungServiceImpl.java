@@ -10,6 +10,7 @@ import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import jakarta.inject.Named;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @Named
@@ -20,9 +21,9 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 	private final UUIDProvider uuidProvider;
 
 	@Override
-	public LocalDate aktualisiereNaechsterTermin(ErinnerungId erinnerungId) {
+	public Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
@@ -54,5 +55,17 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 	@Override
 	public void loescheErinnerung(ErinnerungId erinnerungId) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public List<ErinnerungId> findeAlleErinnerungIdZuSuchstring(String suchString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Erinnerung> holeErinnerungZuId(ErinnerungId erinnerungId) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 }

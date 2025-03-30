@@ -28,7 +28,7 @@ class WiederholungInterpreterTest {
 			// Run
 			unitUnderTest.list();
 			// Check
-			verify(listWiederholungCommand, times(1)).run(System.out);
+			verify(listWiederholungCommand, times(1)).run();
 		}
 	}
 }

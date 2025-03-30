@@ -5,13 +5,18 @@ import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.Wiederholung;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface ErinnerungService {
-	LocalDate aktualisiereNaechsterTermin(ErinnerungId erinnerungId);
+	Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId);
 
 	ErinnerungId erzeugeErinnerung(String name, LocalDate ersterTermin, Wiederholung wiederholung, LocalDate bezugsdatum);
 
+	List<ErinnerungId> findeAlleErinnerungIdZuSuchstring(String suchString);
+
 	List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin();
+
+	Optional<Erinnerung> holeErinnerungZuId(ErinnerungId erinnerungId);
 
 	void loescheErinnerung(ErinnerungId erinnerungId);
 }
