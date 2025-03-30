@@ -1,6 +1,6 @@
 # memnon
 
-An alert tool for important dates, like birthdays a. o.
+An alert tool for important dates, like birthdays etc.
 
 
 ## Requirements
