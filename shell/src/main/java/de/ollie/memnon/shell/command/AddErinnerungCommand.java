@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
 @Named
-@RequiredArgsConstructor
+@RequiredArgsConstructor // NO_UCD
 public class AddErinnerungCommand {
 
 	private final ErinnerungService erinnerungService;

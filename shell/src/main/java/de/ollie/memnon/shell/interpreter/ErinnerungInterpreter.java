@@ -10,8 +10,8 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
-@RequiredArgsConstructor
-public class ErinnerungInterpreter {
+@RequiredArgsConstructor // NO_UCD
+public class ErinnerungInterpreter { // NO_UCD
 
 	private final AddErinnerungCommand addErinnerungCommand;
 	private final ListErinnerungCommand listErinnerungCommand;

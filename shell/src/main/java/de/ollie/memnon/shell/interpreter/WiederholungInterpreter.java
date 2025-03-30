@@ -6,13 +6,13 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
 @ShellComponent
-@RequiredArgsConstructor
-public class WiederholungInterpreter {
+@RequiredArgsConstructor // NO_UCD
+public class WiederholungInterpreter { // NO_UCD
 
 	private final ListWiederholungCommand listWiederholungCommand;
 
 	@ShellMethod(value = "Lists all Wiederholung objects", key = { "list-wiederholungen", "lw" })
 	public String list() {
-		return listWiederholungCommand.run(System.out);
+		return listWiederholungCommand.run();
 	}
 }

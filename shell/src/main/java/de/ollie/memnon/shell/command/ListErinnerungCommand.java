@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @Named
-@RequiredArgsConstructor
+@RequiredArgsConstructor // NO_UCD
 public class ListErinnerungCommand {
 
 	private final ErinnerungService erinnerungService;

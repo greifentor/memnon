@@ -1,12 +1,11 @@
 package de.ollie.memnon.shell.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Wiederholung;
+import de.ollie.memnon.core.service.OutputManager;
 import de.ollie.memnon.core.service.WiederholungService;
-import java.io.PrintStream;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ class ListWiederholungCommandTest {
 	private Wiederholung wiederholung1;
 
 	@Mock
-	private PrintStream out;
+	private OutputManager outputManager;
 
 	@Mock
 	private WiederholungService wiederHolungService;
@@ -42,11 +41,6 @@ class ListWiederholungCommandTest {
 	class run_PrintStream {
 
 		@Test
-		void throwsAnException_passingANullValueAsOut() {
-			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.run(null));
-		}
-
-		@Test
 		void returnsTheCorrectString() {
 			// Prepare
 			List<Wiederholung> l = List.of(wiederholung0, wiederholung1);
@@ -55,7 +49,7 @@ class ListWiederholungCommandTest {
 			when(wiederholung1.getName()).thenReturn(NAME_1);
 			when(wiederHolungService.holeAlleWiederholungenAufsteigendSortiertNachName()).thenReturn(l);
 			// Run
-			String returned = unitUnderTest.run(out);
+			String returned = unitUnderTest.run();
 			// Check
 			assertEquals(expected, returned);
 		}
@@ -68,11 +62,11 @@ class ListWiederholungCommandTest {
 			when(wiederholung1.getName()).thenReturn(NAME_1);
 			when(wiederHolungService.holeAlleWiederholungenAufsteigendSortiertNachName()).thenReturn(l);
 			// Run
-			unitUnderTest.run(out);
+			unitUnderTest.run();
 			// Check
-			InOrder inOrder = Mockito.inOrder(out);
-			inOrder.verify(out).println(NAME_0);
-			inOrder.verify(out).println(NAME_1);
+			InOrder inOrder = Mockito.inOrder(outputManager);
+			inOrder.verify(outputManager).println(NAME_0);
+			inOrder.verify(outputManager).println(NAME_1);
 		}
 	}
 }
