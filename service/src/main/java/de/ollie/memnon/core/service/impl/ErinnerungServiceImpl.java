@@ -65,7 +65,7 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	@Override
 	public Optional<Erinnerung> holeErinnerungZuId(ErinnerungId erinnerungId) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		ensure(erinnerungId != null, "erinnerung id cannot be null!");
+		return erinnerungPersistencePort.findById(erinnerungId);
 	}
 }

@@ -12,6 +12,7 @@ import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.shell.OutputManager;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UpdateErinnerungCommandTest {
 
+	private static final DateTimeFormatter LOCAL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static final String NAME = "name";
 	private static final LocalDate RETURN_DATE = LocalDate.of(2025, 3, 30);
 	private static final String SEARCH_STRING = "search-string";
@@ -64,7 +66,7 @@ class UpdateErinnerungCommandTest {
 			when(erinnerungService.aktualisiereNaechsterTermin(erinnerungId)).thenReturn(Optional.of(RETURN_DATE));
 			when(erinnerungService.findeAlleErinnerungIdZuSuchstring(SEARCH_STRING)).thenReturn(List.of(erinnerungId));
 			when(erinnerungService.holeErinnerungZuId(erinnerungId)).thenReturn(Optional.of(erinnerung));
-			when(outputManager.getDateFormatter()).thenReturn(OutputManager.LOCAL_DATE_FORMATTER);
+			when(outputManager.getDateFormatter()).thenReturn(LOCAL_DATE_FORMATTER);
 			// Run & Check
 			assertEquals("1 element(s) changed", unitUnderTest.run(SEARCH_STRING));
 		}
@@ -76,7 +78,7 @@ class UpdateErinnerungCommandTest {
 			when(erinnerungService.aktualisiereNaechsterTermin(erinnerungId)).thenReturn(Optional.of(RETURN_DATE));
 			when(erinnerungService.findeAlleErinnerungIdZuSuchstring(SEARCH_STRING)).thenReturn(List.of(erinnerungId));
 			when(erinnerungService.holeErinnerungZuId(erinnerungId)).thenReturn(Optional.of(erinnerung));
-			when(outputManager.getDateFormatter()).thenReturn(OutputManager.LOCAL_DATE_FORMATTER);
+			when(outputManager.getDateFormatter()).thenReturn(LOCAL_DATE_FORMATTER);
 			// Run
 			unitUnderTest.run(SEARCH_STRING);
 			// Check

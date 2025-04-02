@@ -1,13 +1,19 @@
 package de.ollie.memnon.shell;
 
+import java.io.PrintStream;
 import java.time.format.DateTimeFormatter;
 
-public interface OutputManager {
+public class OutputManager {
+
 	static final DateTimeFormatter LOCAL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-	default DateTimeFormatter getDateFormatter() {
-		return LOCAL_DATE_FORMATTER;
+	private PrintStream out = System.out;
+
+	public void println(String s) {
+		out.println(s);
 	}
 
-	void println(String s);
+	public DateTimeFormatter getDateFormatter() {
+		return LOCAL_DATE_FORMATTER;
+	}
 }

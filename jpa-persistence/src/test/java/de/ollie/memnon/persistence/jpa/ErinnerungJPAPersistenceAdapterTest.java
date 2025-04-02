@@ -5,11 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
+import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.persistence.jpa.entity.ErinnerungDBO;
 import de.ollie.memnon.persistence.jpa.mapper.ErinnerungDBOMapper;
 import de.ollie.memnon.persistence.jpa.repository.ErinnerungDBORepository;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ErinnerungJPAPersistenceAdapterTest {
+
+	private static final UUID UID = UUID.randomUUID();
 
 	@Mock
 	private Erinnerung erinnerungIn;
@@ -31,6 +36,9 @@ class ErinnerungJPAPersistenceAdapterTest {
 
 	@Mock
 	private ErinnerungDBO erinnerungDboOut;
+
+	@Mock
+	private ErinnerungId erinnerungId;
 
 	@Mock
 	private ErinnerungDBOMapper mapper;
@@ -57,6 +65,27 @@ class ErinnerungJPAPersistenceAdapterTest {
 			List<Erinnerung> returned = unitUnderTest.findAllOrderedByNaechsterTerminAsc();
 			// Check
 			assertEquals(expected, returned);
+		}
+	}
+
+	@Nested
+	class findById_ErinnerungId {
+
+		@Test
+		void throwsAnException_passingANullValue() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.findById(null));
+		}
+
+		@Test
+		void returnsTheOptionalReturnedByTheRepositoryMethod() {
+			// Prepare
+			when(erinnerungId.getUuid()).thenReturn(UID);
+			when(mapper.toModel(erinnerungDboOut, wiederholungService)).thenReturn(erinnerungOut);
+			when(repository.findById(UID)).thenReturn(Optional.of(erinnerungDboOut));
+			// Run
+			Optional<Erinnerung> returned = unitUnderTest.findById(erinnerungId);
+			// Check
+			assertEquals(Optional.of(erinnerungOut), returned);
 		}
 	}
 

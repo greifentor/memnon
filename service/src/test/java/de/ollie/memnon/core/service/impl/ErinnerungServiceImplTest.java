@@ -13,6 +13,7 @@ import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class ErinnerungServiceImplTest {
 	private static final LocalDate ERSTER_TERMIN = LocalDate.of(2025, 4, 7);
 	private static final String NAME = "name";
 	private static final UUID UID = UUID.randomUUID();
+
+	@Mock
+	private Erinnerung erinnerung;
 
 	@Mock
 	private ErinnerungId erinnerungId;
@@ -123,6 +127,26 @@ class ErinnerungServiceImplTest {
 		void doesNothing() {
 			unitUnderTest.loescheErinnerung(erinnerungId);
 			verifyNoInteractions(erinnerungPassed, erinnerungPersistencePort, erinnerungReturned, uuidProvider);
+		}
+	}
+
+	@Nested
+	class holeErinnerungZuId_ErinnerungId {
+
+		@Test
+		void throwsAnException_passingANullValue() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.holeErinnerungZuId(null));
+		}
+
+		@Test
+		void returnsTheValueReturnedByThePersistencePortMethod() {
+			// Prepare
+			Optional<Erinnerung> expected = Optional.of(erinnerung);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(expected);
+			// Check
+			Optional<Erinnerung> returned = unitUnderTest.holeErinnerungZuId(erinnerungId);
+			// Run
+			assertEquals(expected, returned);
 		}
 	}
 }

@@ -3,7 +3,6 @@ package de.ollie.memnon.shell;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import de.ollie.memnon.shell.OutputManagerImpl;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class OutputManagerImplTest {
+class OutputManagerTest {
 
 	private static final String STRING = "string";
 
@@ -21,7 +20,7 @@ class OutputManagerImplTest {
 	private PrintStream out;
 
 	@InjectMocks
-	private OutputManagerImpl unitUnderTest;
+	private OutputManager unitUnderTest;
 
 	@Nested
 	class println_String {
