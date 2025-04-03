@@ -15,4 +15,8 @@ public class Erinnerung {
 	private LocalDate bezugsdatum;
 	private LocalDate naechsterTermin;
 	private Wiederholung wiederholung;
+
+	public LocalDate berechneNaechsterTermin() {
+		return getWiederholung() != null ? wiederholung.berechneNaechsterTermin(this) : null;
+	}
 }

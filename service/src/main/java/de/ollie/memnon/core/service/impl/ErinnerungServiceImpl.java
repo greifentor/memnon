@@ -22,8 +22,16 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	@Override
 	public Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		ensure(erinnerungId != null, "erinnerung id cannot be null!");
+		return erinnerungPersistencePort
+			.findById(erinnerungId)
+			.filter(erinnerung -> erinnerung.getWiederholung() != null)
+			.map(erinnerung -> {
+				LocalDate newNaechsterTermin = erinnerung.berechneNaechsterTermin();
+				erinnerung.setNaechsterTermin(newNaechsterTermin);
+				erinnerungPersistencePort.save(erinnerung);
+				return newNaechsterTermin;
+			});
 	}
 
 	@Override

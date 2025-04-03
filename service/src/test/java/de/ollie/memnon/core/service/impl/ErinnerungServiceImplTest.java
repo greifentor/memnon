@@ -4,11 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
+import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
@@ -27,6 +31,7 @@ class ErinnerungServiceImplTest {
 
 	private static final LocalDate BEZUGSDATUM = LocalDate.of(2000, 4, 7);
 	private static final LocalDate ERSTER_TERMIN = LocalDate.of(2025, 4, 7);
+	private static final LocalDate LOCAL_DATE = LocalDate.of(2025, 4, 3);
 	private static final String NAME = "name";
 	private static final UUID UID = UUID.randomUUID();
 
@@ -51,6 +56,9 @@ class ErinnerungServiceImplTest {
 	@Mock
 	private UUIDProvider uuidProvider;
 
+	@Mock
+	private Wiederholung wiederholung;
+
 	@InjectMocks
 	private ErinnerungServiceImpl unitUnderTest;
 
@@ -58,8 +66,52 @@ class ErinnerungServiceImplTest {
 	class aktualisiereNaechsterTermin_Erinnerung {
 
 		@Test
-		void t() {
+		void throwsAnException_passingANullValueAsErinnerungId() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.aktualisiereNaechsterTermin(null));
+		}
+
+		@Test
+		void doesNotEnhanceTheNaechsterTermin_whenWiederholungIsNull() {
+			// Prepare
+			when(erinnerung.getWiederholung()).thenReturn(null);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			// Run & Check
 			assertTrue(unitUnderTest.aktualisiereNaechsterTermin(erinnerungId).isEmpty());
+			verify(erinnerungPersistencePort, never()).save(erinnerung);
+		}
+
+		@Test
+		void returnsNewNaechsterTermin_whenWiederholungIsNotNull() {
+			// Prepare
+			when(erinnerung.getWiederholung()).thenReturn(wiederholung);
+			when(erinnerung.berechneNaechsterTermin()).thenReturn(LOCAL_DATE);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			// Run & Check
+			assertEquals(LOCAL_DATE, unitUnderTest.aktualisiereNaechsterTermin(erinnerungId).get());
+		}
+
+		@Test
+		void setsTheNewNaechsterTerminToTheErinnerung() {
+			// Prepare
+			when(erinnerung.getWiederholung()).thenReturn(wiederholung);
+			when(erinnerung.berechneNaechsterTermin()).thenReturn(LOCAL_DATE);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			// Run
+			unitUnderTest.aktualisiereNaechsterTermin(erinnerungId);
+			// Check
+			verify(erinnerung, times(1)).setNaechsterTermin(LOCAL_DATE);
+		}
+
+		@Test
+		void savedTheErinnerung_whenNewNaechsterTerminHasBeenChanged() {
+			// Prepare
+			when(erinnerung.getWiederholung()).thenReturn(wiederholung);
+			when(erinnerung.berechneNaechsterTermin()).thenReturn(LOCAL_DATE);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			// Run
+			unitUnderTest.aktualisiereNaechsterTermin(erinnerungId);
+			// Check
+			verify(erinnerungPersistencePort, times(1)).save(erinnerung);
 		}
 	}
 
