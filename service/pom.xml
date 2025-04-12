@@ -27,6 +27,12 @@
 			<artifactId>memnon-service-interface</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>de.ollie</groupId>
+			<artifactId>memnon-jpa-persistence</artifactId>
+			<scope>test</scope>
+			<version>0.0.1</version>
+		</dependency>
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

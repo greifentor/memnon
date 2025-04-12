@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ErinnerungJPAPersistenceAdapterTest {
 
 	private static final UUID UID = UUID.randomUUID();
+	private static final String SUCHSTRING = "suchstring";
 
 	@Mock
 	private Erinnerung erinnerungIn;
@@ -86,6 +87,26 @@ class ErinnerungJPAPersistenceAdapterTest {
 			Optional<Erinnerung> returned = unitUnderTest.findById(erinnerungId);
 			// Check
 			assertEquals(Optional.of(erinnerungOut), returned);
+		}
+	}
+
+	@Nested
+	class findIdsByNameContains_String {
+
+		@Test
+		void throwsAnException_passingANullValue() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.findIdsByNameContains(null));
+		}
+
+		@Test
+		void returnsTheOptionalReturnedByTheRepositoryMethod() {
+			// Prepare
+			when(erinnerungDboOut.getId()).thenReturn(UID);
+			when(repository.findIdsByNameContains(SUCHSTRING)).thenReturn(List.of(erinnerungDboOut));
+			// Run
+			List<ErinnerungId> returned = unitUnderTest.findIdsByNameContains(SUCHSTRING);
+			// Check
+			assertEquals(UID, returned.get(0).getUuid());
 		}
 	}
 

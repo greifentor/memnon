@@ -34,6 +34,7 @@ class ErinnerungServiceImplTest {
 	private static final LocalDate LOCAL_DATE = LocalDate.of(2025, 4, 3);
 	private static final String NAME = "name";
 	private static final UUID UID = UUID.randomUUID();
+	private static final String SUCHSTRING = "such-string";
 
 	@Mock
 	private Erinnerung erinnerung;
@@ -156,6 +157,26 @@ class ErinnerungServiceImplTest {
 			);
 			// Check
 			assertEquals(erinnerungIdReturned, returned);
+		}
+	}
+
+	@Nested
+	class findeAlleErinnerungIdZuSuchstring_String {
+
+		@Test
+		void throwsException_passingANullPointer() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.findeAlleErinnerungIdZuSuchstring(null));
+		}
+
+		@Test
+		void callsThePersistencePortFindMethodCorrectly() {
+			// Prepare
+			List<ErinnerungId> expected = List.of();
+			when(erinnerungPersistencePort.findIdsByNameContains(SUCHSTRING)).thenReturn(expected);
+			// Run
+			List<ErinnerungId> returned = unitUnderTest.findeAlleErinnerungIdZuSuchstring(SUCHSTRING);
+			// Check
+			assertSame(expected, returned);
 		}
 	}
 

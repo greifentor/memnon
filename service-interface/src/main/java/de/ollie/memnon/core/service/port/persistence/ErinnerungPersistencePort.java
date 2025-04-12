@@ -10,5 +10,7 @@ public interface ErinnerungPersistencePort {
 
 	Optional<Erinnerung> findById(ErinnerungId erinnerungId);
 
+	List<ErinnerungId> findIdsByNameContains(String suchString);
+
 	Erinnerung save(Erinnerung erinnerung);
 }

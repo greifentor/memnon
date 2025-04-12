@@ -42,4 +42,10 @@ public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePor
 		ensure(erinnerungId != null, "erinnerung id cannot be null!");
 		return repository.findById(erinnerungId.getUuid()).map(e -> mapper.toModel(e, wiederholungService));
 	}
+
+	@Override
+	public List<ErinnerungId> findIdsByNameContains(String suchString) {
+		ensure(suchString != null, "such string cannot be null!");
+		return repository.findIdsByNameContains(suchString).stream().map(dbo -> new ErinnerungId(dbo.getId())).toList();
+	}
 }

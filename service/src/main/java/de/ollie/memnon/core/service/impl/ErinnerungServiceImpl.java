@@ -67,8 +67,8 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	@Override
 	public List<ErinnerungId> findeAlleErinnerungIdZuSuchstring(String suchString) {
-		// TODO Auto-generated method stub
-		return null;
+		ensure(suchString != null, "such string cannot be null!");
+		return erinnerungPersistencePort.findIdsByNameContains(suchString);
 	}
 
 	@Override
