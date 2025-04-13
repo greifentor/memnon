@@ -60,6 +60,7 @@
 	</build>
 	<modules>
 		<module>base-lib</module>
+		<module>gui-swing</module>
 		<module>jpa-persistence</module>
 		<module>service</module>
 		<module>service-interface</module>
