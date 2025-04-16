@@ -10,6 +10,7 @@ import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.persistence.jpa.entity.ErinnerungDBO;
 import de.ollie.memnon.persistence.jpa.mapper.ErinnerungDBOMapper;
 import de.ollie.memnon.persistence.jpa.repository.ErinnerungDBORepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +63,22 @@ class ErinnerungJPAPersistenceAdapterTest {
 			List<Erinnerung> expected = List.of(erinnerungOut);
 			when(mapper.toModel(erinnerungDboOut, wiederholungService)).thenReturn(erinnerungOut);
 			when(repository.findAll()).thenReturn(List.of(erinnerungDboOut));
+			// Run
+			List<Erinnerung> returned = unitUnderTest.findAllOrderedByNaechsterTerminAsc();
+			// Check
+			assertEquals(expected, returned);
+		}
+
+		@Test
+		void returnsACorrectlyOrderedList() {
+			// Prepare
+			LocalDate date = LocalDate.now();
+			Erinnerung e0 = new Erinnerung().setNaechsterTermin(date).setName("B");
+			Erinnerung e1 = new Erinnerung().setNaechsterTermin(date).setName("A");
+			Erinnerung e2 = new Erinnerung().setNaechsterTermin(date.minusDays(1)).setName("C");
+			List<Erinnerung> expected = List.of(e2, e1, e0);
+			when(mapper.toModel(erinnerungDboOut, wiederholungService)).thenReturn(e0, e1, e2);
+			when(repository.findAll()).thenReturn(List.of(erinnerungDboOut, erinnerungDboOut, erinnerungDboOut));
 			// Run
 			List<Erinnerung> returned = unitUnderTest.findAllOrderedByNaechsterTerminAsc();
 			// Check

@@ -33,8 +33,16 @@ public class ErinnerungJPAPersistenceAdapter implements ErinnerungPersistencePor
 			.findAll()
 			.stream()
 			.map(dbo -> mapper.toModel(dbo, wiederholungService))
-			.sorted((e0, e1) -> e0.toString().compareTo(e1.toString()))
+			.sorted(this::compareErinnerungTo)
 			.toList();
+	}
+
+	private int compareErinnerungTo(Erinnerung e0, Erinnerung e1) {
+		int r = e0.getNaechsterTermin().compareTo(e1.getNaechsterTermin());
+		if (r == 0) {
+			r = e0.getName().compareTo(e1.getName());
+		}
+		return r;
 	}
 
 	@Override
