@@ -12,5 +12,7 @@ public interface ErinnerungPersistencePort {
 
 	List<ErinnerungId> findIdsByNameContains(String suchString);
 
+	void remove(ErinnerungId erinnerungId);
+
 	Erinnerung save(Erinnerung erinnerung);
 }

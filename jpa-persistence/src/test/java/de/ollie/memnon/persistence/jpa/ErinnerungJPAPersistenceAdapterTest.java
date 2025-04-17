@@ -2,6 +2,8 @@ package de.ollie.memnon.persistence.jpa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
@@ -124,6 +126,25 @@ class ErinnerungJPAPersistenceAdapterTest {
 			List<ErinnerungId> returned = unitUnderTest.findIdsByNameContains(SUCHSTRING);
 			// Check
 			assertEquals(UID, returned.get(0).getUuid());
+		}
+	}
+
+	@Nested
+	class remove_ErinnerungId {
+
+		@Test
+		void throwsAnException_passingANullValueAsErinnerunId() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.remove(null));
+		}
+
+		@Test
+		void callsTheRepositoryDeleteMethod_withPassedErinnerungId() {
+			// Prepare
+			when(erinnerungId.getUuid()).thenReturn(UID);
+			// Run
+			unitUnderTest.remove(erinnerungId);
+			// Check
+			verify(repository, times(1)).deleteById(UID);
 		}
 	}
 

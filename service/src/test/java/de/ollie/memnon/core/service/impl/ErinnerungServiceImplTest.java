@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
@@ -197,9 +196,16 @@ class ErinnerungServiceImplTest {
 	class loescheErinnerung_Erinnerung {
 
 		@Test
-		void doesNothing() {
+		void throwsAnException_passingANullValueAsErinnerungId() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.loescheErinnerung(null));
+		}
+
+		@Test
+		void callsThePersistencePortRemoveMethod_withPassedId() {
+			// Run
 			unitUnderTest.loescheErinnerung(erinnerungId);
-			verifyNoInteractions(erinnerungPassed, erinnerungPersistencePort, erinnerungReturned, uuidProvider);
+			// Check
+			verify(erinnerungPersistencePort, times(1)).remove(erinnerungId);
 		}
 	}
 

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.shell.command.AddErinnerungCommand;
 import de.ollie.memnon.shell.command.ListErinnerungCommand;
+import de.ollie.memnon.shell.command.RemoveErinnerungCommand;
 import de.ollie.memnon.shell.command.UpdateErinnerungCommand;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +28,9 @@ class ErinnerungInterpreterTest {
 
 	@Mock
 	private ListErinnerungCommand listErinnerungCommand;
+
+	@Mock
+	private RemoveErinnerungCommand removeErinnerungCommand;
 
 	@Mock
 	private UpdateErinnerungCommand updateErinnerungCommand;
@@ -61,6 +65,30 @@ class ErinnerungInterpreterTest {
 			when(unitUnderTest.list()).thenReturn(RETURN_STRING);
 			// Run & Check
 			assertEquals(RETURN_STRING, unitUnderTest.list());
+		}
+	}
+
+	@Nested
+	class remove_String {
+
+		@Test
+		void throwsAnException_passingANullValue() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.remove(null));
+		}
+
+		@Test
+		void throwsAnException_passingAnEmptyString() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.remove(""));
+		}
+
+		@Test
+		void returnsTheCorrectString() {
+			// Prepare
+			when(removeErinnerungCommand.run(SEARCH_STRING)).thenReturn(RETURN_STRING);
+			// Run
+			String returned = unitUnderTest.remove(SEARCH_STRING);
+			// Check
+			assertEquals(RETURN_STRING, returned);
 		}
 	}
 
