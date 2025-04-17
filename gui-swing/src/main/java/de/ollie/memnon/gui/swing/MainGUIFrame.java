@@ -4,24 +4,32 @@ import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.service.ErinnerungService;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.time.LocalDate;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 
 @Named
 @RequiredArgsConstructor
 public class MainGUIFrame extends JFrame {
 
+	private final ApplicationContext context;
 	private final ErinnerungService erinnerungService;
+	private final GUIConfiguration guiConfiguration;
 
 	private static class ErinnerungListCellRenderer implements ListCellRenderer<Erinnerung> {
 
@@ -78,8 +86,23 @@ public class MainGUIFrame extends JFrame {
 		);
 		listErinnerungen.setCellRenderer(new ErinnerungListCellRenderer());
 		listErinnerungen.addListSelectionListener(new ErinnerungListSelectionListener(listErinnerungen, erinnerungService));
-		setContentPane(new JScrollPane(listErinnerungen));
+		JPanel mainPanel = new JPanel(
+			new BorderLayout(guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
+		);
+		mainPanel.add(new JScrollPane(listErinnerungen), BorderLayout.CENTER);
+		mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
+		setContentPane(mainPanel);
 		setSize(400, 600);
 		setVisible(true);
+	}
+
+	private JPanel createButtonPanel() {
+		JPanel buttonPanel = new JPanel(
+			new FlowLayout(FlowLayout.RIGHT, guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
+		);
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(e -> System.exit(SpringApplication.exit(context)));
+		buttonPanel.add(closeButton);
+		return buttonPanel;
 	}
 }
