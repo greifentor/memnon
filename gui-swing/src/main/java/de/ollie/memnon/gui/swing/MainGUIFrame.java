@@ -1,6 +1,7 @@
 package de.ollie.memnon.gui.swing;
 
 import de.ollie.memnon.core.model.Erinnerung;
+import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.service.ErinnerungService;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
@@ -9,7 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.time.LocalDate;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,7 +32,25 @@ public class MainGUIFrame extends JFrame {
 	private final ErinnerungService erinnerungService;
 	private final GUIConfiguration guiConfiguration;
 
+	@RequiredArgsConstructor
 	private static class ErinnerungListCellRenderer implements ListCellRenderer<Erinnerung> {
+
+		private final ErinnerungService erinnerungService;
+
+		private static Map<ErinnerungStatus, Color> colorsForErinnerungStatus = Map.of(
+			ErinnerungStatus.DEMNAECHST,
+			new Color(12, 31, 177), // Blue
+			ErinnerungStatus.ENTFERNT,
+			Color.DARK_GRAY,
+			ErinnerungStatus.HEUTE,
+			new Color(196, 2, 31), // Red
+			ErinnerungStatus.MORGEN,
+			new Color(222, 78, 3), // Orange
+			ErinnerungStatus.NAH,
+			new Color(221, 177, 5), // Dark_Yellow
+			ErinnerungStatus.VERPASST,
+			new Color(128, 6, 24) // Dark_Red
+		);
 
 		@Override
 		public Component getListCellRendererComponent(
@@ -47,14 +66,9 @@ public class MainGUIFrame extends JFrame {
 			if (isSelected) {
 				label.setFont(new Font("monospaced", Font.BOLD, 12));
 			} else {
-				LocalDate now = LocalDate.now();
-				if (now.isAfter(erinnerung.getNaechsterTermin())) {
-					label.setForeground(Color.RED);
-				} else if (now.plusDays(3).isAfter(erinnerung.getNaechsterTermin())) {
-					label.setForeground(Color.YELLOW);
-				} else {
-					label.setForeground(Color.GREEN);
-				}
+				label.setForeground(
+					colorsForErinnerungStatus.getOrDefault(erinnerungService.ermittleStatus(erinnerung.getId()), Color.PINK)
+				);
 			}
 			return label;
 		}
@@ -84,7 +98,7 @@ public class MainGUIFrame extends JFrame {
 		listErinnerungen.setListData(
 			erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin().toArray(new Erinnerung[0])
 		);
-		listErinnerungen.setCellRenderer(new ErinnerungListCellRenderer());
+		listErinnerungen.setCellRenderer(new ErinnerungListCellRenderer(erinnerungService));
 		listErinnerungen.addListSelectionListener(new ErinnerungListSelectionListener(listErinnerungen, erinnerungService));
 		JPanel mainPanel = new JPanel(
 			new BorderLayout(guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
