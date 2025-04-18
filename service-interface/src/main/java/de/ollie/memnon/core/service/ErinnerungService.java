@@ -2,6 +2,7 @@ package de.ollie.memnon.core.service;
 
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
+import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.model.Wiederholung;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.Optional;
 
 public interface ErinnerungService {
 	Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId);
+
+	ErinnerungStatus ermittleStatus(ErinnerungId erinnerungId);
 
 	ErinnerungId erzeugeErinnerung(String name, LocalDate ersterTermin, Wiederholung wiederholung, LocalDate bezugsdatum);
 

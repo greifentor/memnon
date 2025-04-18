@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.ollie.memnon.core.model.Erinnerung;
+import de.ollie.memnon.core.model.ErinnerungId;
+import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.shell.OutputManager;
 import java.time.LocalDate;
@@ -25,9 +27,13 @@ class ListErinnerungCommandTest {
 	private static final String NAECHSTER_TERMIN_STRING = "06.02.1999";
 	private static final LocalDate NAECHSTER_TERMIN = LocalDate.of(1999, 2, 6);
 	private static final String NAME = "name";
+	private static final ErinnerungStatus STATUS = ErinnerungStatus.HEUTE;
 
 	@Mock
 	private Erinnerung erinnerung;
+
+	@Mock
+	private ErinnerungId erinnerungId;
 
 	@Mock
 	private ErinnerungService erinnerungService;
@@ -60,13 +66,16 @@ class ListErinnerungCommandTest {
 		void callsPrintStreamCorrectly_whenNoBezugsdatumIsSet() {
 			// Prepare
 			List<Erinnerung> l = List.of(erinnerung);
+			when(erinnerung.getId()).thenReturn(erinnerungId);
 			when(erinnerung.getNaechsterTermin()).thenReturn(NAECHSTER_TERMIN);
 			when(erinnerung.getName()).thenReturn(NAME);
+			when(erinnerungService.ermittleStatus(erinnerungId)).thenReturn(STATUS);
 			when(erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin()).thenReturn(l);
 			// Run
 			unitUnderTest.run();
 			// Check
-			verify(out, times(1)).println(NAME + "                      " + NAECHSTER_TERMIN_STRING + "          -");
+			verify(out, times(1))
+				.println(NAME + "                                     " + NAECHSTER_TERMIN_STRING + "          - " + STATUS);
 		}
 
 		@Test
@@ -74,14 +83,24 @@ class ListErinnerungCommandTest {
 			// Prepare
 			List<Erinnerung> l = List.of(erinnerung);
 			when(erinnerung.getBezugsdatum()).thenReturn(BEZUGSDATUM);
+			when(erinnerung.getId()).thenReturn(erinnerungId);
 			when(erinnerung.getNaechsterTermin()).thenReturn(NAECHSTER_TERMIN);
 			when(erinnerung.getName()).thenReturn(NAME);
+			when(erinnerungService.ermittleStatus(erinnerungId)).thenReturn(STATUS);
 			when(erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin()).thenReturn(l);
 			// Run
 			unitUnderTest.run();
 			// Check
 			verify(out, times(1))
-				.println(NAME + "                      " + NAECHSTER_TERMIN_STRING + " " + BEZUGSDATUM_STRING);
+				.println(
+					NAME +
+					"                                     " +
+					NAECHSTER_TERMIN_STRING +
+					" " +
+					BEZUGSDATUM_STRING +
+					" " +
+					STATUS
+				);
 		}
 	}
 }

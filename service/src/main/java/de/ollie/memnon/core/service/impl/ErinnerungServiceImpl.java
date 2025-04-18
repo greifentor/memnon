@@ -2,14 +2,18 @@ package de.ollie.memnon.core.service.impl;
 
 import static de.ollie.memnon.util.Check.ensure;
 
+import de.ollie.memnon.configuration.ServiceConfiguration;
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
+import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.ErinnerungService;
+import de.ollie.memnon.core.service.LocalDateService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import jakarta.inject.Named;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -17,12 +21,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // NO_UCD
 class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
+	private static final String MSG_ERINNERUNG_NOT_FOUND = "erinnerung id cannot be null!";
+
 	private final ErinnerungPersistencePort erinnerungPersistencePort;
+	private final LocalDateService localDateService;
+	private final ServiceConfiguration serviceConfiguration;
 	private final UUIDProvider uuidProvider;
 
 	@Override
 	public Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId) {
-		ensure(erinnerungId != null, "erinnerung id cannot be null!");
+		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
 		return erinnerungPersistencePort
 			.findById(erinnerungId)
 			.filter(erinnerung -> erinnerung.getWiederholung() != null)
@@ -32,6 +40,29 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 				erinnerungPersistencePort.save(erinnerung);
 				return newNaechsterTermin;
 			});
+	}
+
+	@Override
+	public ErinnerungStatus ermittleStatus(ErinnerungId erinnerungId) {
+		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
+		Erinnerung erinnerung = erinnerungPersistencePort
+			.findById(erinnerungId)
+			.orElseThrow(() -> new NoSuchElementException(MSG_ERINNERUNG_NOT_FOUND));
+		LocalDate now = localDateService.now();
+		if (now.isAfter(erinnerung.getNaechsterTermin())) {
+			return ErinnerungStatus.VERPASST;
+		} else if (now.isEqual(erinnerung.getNaechsterTermin())) {
+			return ErinnerungStatus.HEUTE;
+		} else if (now.plusDays(1).isEqual(erinnerung.getNaechsterTermin())) {
+			return ErinnerungStatus.MORGEN;
+		} else if (now.plusDays(serviceConfiguration.getStatusMaxDaysNah() + 1L).isAfter(erinnerung.getNaechsterTermin())) {
+			return ErinnerungStatus.NAH;
+		} else if (
+			now.plusDays(serviceConfiguration.getStatusMaxDaysDemaechst() + 1L).isAfter(erinnerung.getNaechsterTermin())
+		) {
+			return ErinnerungStatus.DEMNAECHST;
+		}
+		return ErinnerungStatus.ENTFERNT;
 	}
 
 	@Override
@@ -56,25 +87,25 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 	}
 
 	@Override
-	public List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin() {
-		return erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
-	}
-
-	@Override
-	public void loescheErinnerung(ErinnerungId erinnerungId) {
-		ensure(erinnerungId != null, "erinnerung id cannot be null!");
-		erinnerungPersistencePort.remove(erinnerungId);
-	}
-
-	@Override
 	public List<ErinnerungId> findeAlleErinnerungIdZuSuchstring(String suchString) {
 		ensure(suchString != null, "such string cannot be null!");
 		return erinnerungPersistencePort.findIdsByNameContains(suchString);
 	}
 
 	@Override
+	public List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin() {
+		return erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
+	}
+
+	@Override
 	public Optional<Erinnerung> holeErinnerungZuId(ErinnerungId erinnerungId) {
-		ensure(erinnerungId != null, "erinnerung id cannot be null!");
+		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
 		return erinnerungPersistencePort.findById(erinnerungId);
+	}
+
+	@Override
+	public void loescheErinnerung(ErinnerungId erinnerungId) {
+		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
+		erinnerungPersistencePort.remove(erinnerungId);
 	}
 }

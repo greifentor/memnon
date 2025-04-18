@@ -9,13 +9,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.ollie.memnon.configuration.ServiceConfiguration;
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
+import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.model.Wiederholung;
+import de.ollie.memnon.core.service.LocalDateService;
 import de.ollie.memnon.core.service.WiederholungService;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +36,7 @@ class ErinnerungServiceImplTest {
 	private static final LocalDate ERSTER_TERMIN = LocalDate.of(2025, 4, 7);
 	private static final LocalDate LOCAL_DATE = LocalDate.of(2025, 4, 3);
 	private static final String NAME = "name";
+	private static final LocalDate NOW = LocalDate.now();
 	private static final UUID UID = UUID.randomUUID();
 	private static final String SUCHSTRING = "such-string";
 
@@ -54,10 +59,16 @@ class ErinnerungServiceImplTest {
 	private Erinnerung erinnerungReturned;
 
 	@Mock
+	private LocalDateService localDateService;
+
+	@Mock
 	private UUIDProvider uuidProvider;
 
 	@Mock
 	private Wiederholung wiederholung;
+
+	@Mock
+	private ServiceConfiguration serviceConfiguration;
 
 	@InjectMocks
 	private ErinnerungServiceImpl unitUnderTest;
@@ -112,6 +123,129 @@ class ErinnerungServiceImplTest {
 			unitUnderTest.aktualisiereNaechsterTermin(erinnerungId);
 			// Check
 			verify(erinnerungPersistencePort, times(1)).save(erinnerung);
+		}
+	}
+
+	@Nested
+	class ermittleStatus_ErinnerungId {
+
+		@Test
+		void throwsAnException_passingANullValueAsErinnerungId() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.ermittleStatus(null));
+		}
+
+		@Test
+		void throwsAnException_passingAnErinnerungId_whichIsMatching() {
+			// Prepare
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.empty());
+			// Run & Check
+			assertThrows(NoSuchElementException.class, () -> unitUnderTest.ermittleStatus(erinnerungId));
+		}
+
+		@Test
+		void returnsStatusVerpasst_whenErinnerungNaechsterTermin_isBeforeNow() {
+			// Prepare
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.minusDays(1));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.VERPASST, returned);
+		}
+
+		@Test
+		void returnsStatusHeute_whenErinnerungNaechsterTermin_isEqualNow() {
+			// Prepare
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW);
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.HEUTE, returned);
+		}
+
+		@Test
+		void returnsStatusMorgen_whenErinnerungNaechsterTermin_isNowPlusOneDay() {
+			// Prepare
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(1));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.MORGEN, returned);
+		}
+
+		@Test
+		void returnsStatusEntfernt_whenErinnerungNaechsterTermin_isAfterDemaechst() {
+			// Prepare
+			int demnaechst = 7;
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(demnaechst + 1));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			when(serviceConfiguration.getStatusMaxDaysDemaechst()).thenReturn(demnaechst);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.ENTFERNT, returned);
+		}
+
+		@Test
+		void returnsStatusDemnaechst_whenErinnerungNaechsterTermin_isEqualDemaechst() {
+			// Prepare
+			int demnaechst = 7;
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(demnaechst));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			when(serviceConfiguration.getStatusMaxDaysDemaechst()).thenReturn(demnaechst);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.DEMNAECHST, returned);
+		}
+
+		@Test
+		void returnsStatusDemnaechst_whenErinnerungNaechsterTermin_isBeforeDemaechst() {
+			// Prepare
+			int demnaechst = 7;
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(demnaechst - 1));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			when(serviceConfiguration.getStatusMaxDaysDemaechst()).thenReturn(demnaechst);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.DEMNAECHST, returned);
+		}
+
+		@Test
+		void returnsStatusNah_whenErinnerungNaechsterTermin_isEqualNah() {
+			// Prepare
+			int demnaechst = 3;
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(demnaechst));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			when(serviceConfiguration.getStatusMaxDaysNah()).thenReturn(demnaechst);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.NAH, returned);
+		}
+
+		@Test
+		void returnsStatusNah_whenErinnerungNaechsterTermin_isBeforeNah() {
+			// Prepare
+			int demnaechst = 3;
+			when(erinnerung.getNaechsterTermin()).thenReturn(NOW.plusDays(demnaechst - 1));
+			when(erinnerungPersistencePort.findById(erinnerungId)).thenReturn(Optional.of(erinnerung));
+			when(localDateService.now()).thenReturn(NOW);
+			when(serviceConfiguration.getStatusMaxDaysNah()).thenReturn(demnaechst);
+			// Run
+			ErinnerungStatus returned = unitUnderTest.ermittleStatus(erinnerungId);
+			// Check
+			assertEquals(ErinnerungStatus.NAH, returned);
 		}
 	}
 
@@ -193,23 +327,6 @@ class ErinnerungServiceImplTest {
 	}
 
 	@Nested
-	class loescheErinnerung_Erinnerung {
-
-		@Test
-		void throwsAnException_passingANullValueAsErinnerungId() {
-			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.loescheErinnerung(null));
-		}
-
-		@Test
-		void callsThePersistencePortRemoveMethod_withPassedId() {
-			// Run
-			unitUnderTest.loescheErinnerung(erinnerungId);
-			// Check
-			verify(erinnerungPersistencePort, times(1)).remove(erinnerungId);
-		}
-	}
-
-	@Nested
 	class holeErinnerungZuId_ErinnerungId {
 
 		@Test
@@ -226,6 +343,23 @@ class ErinnerungServiceImplTest {
 			Optional<Erinnerung> returned = unitUnderTest.holeErinnerungZuId(erinnerungId);
 			// Run
 			assertEquals(expected, returned);
+		}
+	}
+
+	@Nested
+	class loescheErinnerung_Erinnerung {
+
+		@Test
+		void throwsAnException_passingANullValueAsErinnerungId() {
+			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.loescheErinnerung(null));
+		}
+
+		@Test
+		void callsThePersistencePortRemoveMethod_withPassedId() {
+			// Run
+			unitUnderTest.loescheErinnerung(erinnerungId);
+			// Check
+			verify(erinnerungPersistencePort, times(1)).remove(erinnerungId);
 		}
 	}
 }

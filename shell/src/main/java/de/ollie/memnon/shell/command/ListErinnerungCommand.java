@@ -18,13 +18,14 @@ public class ListErinnerungCommand {
 	public String run() {
 		List<Erinnerung> l = erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-		l.forEach(w ->
+		l.forEach(erinnerung ->
 			out.println(
 				String.format(
-					"%-25s %10s %10s",
-					w.getName(),
-					formatter.format(w.getNaechsterTermin()),
-					(w.getBezugsdatum() != null ? formatter.format(w.getBezugsdatum()) : "-")
+					"%-40s %10s %10s %s",
+					erinnerung.getName(),
+					formatter.format(erinnerung.getNaechsterTermin()),
+					(erinnerung.getBezugsdatum() != null ? formatter.format(erinnerung.getBezugsdatum()) : "-"),
+					erinnerungService.ermittleStatus(erinnerung.getId())
 				)
 			)
 		);
