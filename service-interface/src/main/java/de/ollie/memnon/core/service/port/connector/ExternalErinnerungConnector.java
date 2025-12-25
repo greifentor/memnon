@@ -1,4 +1,4 @@
-package de.ollie.memnon.core.service.port.bridge;
+package de.ollie.memnon.core.service.port.connector;
 
 import de.ollie.memnon.core.model.BridgeId;
 import de.ollie.memnon.core.model.ErinnerungId;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * (24.12.2025)
  */
-public interface ExternalErinnerungBridge {
+public interface ExternalErinnerungConnector {
 	/**
 	 * @return "true", when the Erinnerung objects can be confirmed. Note, that the returned id of the bridge have to be
 	 *         unique in this case.
@@ -25,7 +25,7 @@ public interface ExternalErinnerungBridge {
 	 *
 	 * @param id The id of the Erinnerung object which should be confirmed.
 	 * @return "true" in case of a successful confirmation, "false" otherwise.
-	 * @throws BridgeOperationFailedException In case of an error while confirmation.
+	 * @throws ConnectorOperationFailedException In case of an error while confirmation.
 	 * @throws UnsupportedOperationException When Erinnerung objects related to the bridge implementation, can not be
 	 *         confirmed.
 	 */

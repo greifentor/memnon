@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class BridgeOperationFailedExceptionTest {
+class ConnectorOperationFailedExceptionTest {
 
 	@Nested
 	class constructor_String_Exception {
@@ -19,12 +19,12 @@ class BridgeOperationFailedExceptionTest {
 
 		@Test
 		void setsThePassedCauseCorrectly() {
-			assertSame(EXCEPTION, new BridgeOperationFailedException(MESSAGE, EXCEPTION).getCause());
+			assertSame(EXCEPTION, new ConnectorOperationFailedException(MESSAGE, EXCEPTION).getCause());
 		}
 
 		@Test
 		void setsThePassedMessageCorrectly() {
-			assertEquals(MESSAGE, new BridgeOperationFailedException(MESSAGE, EXCEPTION).getMessage());
+			assertEquals(MESSAGE, new ConnectorOperationFailedException(MESSAGE, EXCEPTION).getMessage());
 		}
 	}
 }
