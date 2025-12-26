@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,21 +14,26 @@ import de.ollie.memnon.configuration.ServiceConfiguration;
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.ErinnerungStatus;
+import de.ollie.memnon.core.model.ExternalErinnerung;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.LocalDateService;
 import de.ollie.memnon.core.service.WiederholungService;
+import de.ollie.memnon.core.service.port.connector.ExternalErinnerungConnector;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ErinnerungServiceImplTest {
@@ -52,6 +58,8 @@ class ErinnerungServiceImplTest {
 	@Mock
 	private Erinnerung erinnerungPassed;
 
+	private List<ExternalErinnerungConnector> externalErinnerungConnectors = new ArrayList<>();
+
 	@Mock
 	private ErinnerungPersistencePort erinnerungPersistencePort;
 
@@ -72,6 +80,11 @@ class ErinnerungServiceImplTest {
 
 	@InjectMocks
 	private ErinnerungServiceImpl unitUnderTest;
+
+	@BeforeEach
+	void beforeEach() {
+		ReflectionTestUtils.setField(unitUnderTest, "externalErinnerungConnectors", externalErinnerungConnectors);
+	}
 
 	@Nested
 	class aktualisiereNaechsterTermin_Erinnerung {
@@ -319,10 +332,34 @@ class ErinnerungServiceImplTest {
 		@Test
 		void callsTheErinnerungPersistencePortMethodCorrectly() {
 			// Prepare
-			List<Erinnerung> l = List.of();
+			List<Erinnerung> l = new ArrayList<>();
 			when(erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc()).thenReturn(l);
 			// Run & Check
 			assertSame(l, unitUnderTest.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin());
+		}
+
+		@Test
+		void addsNoExternalErinnerungObjects_whenNoExternalErinnerungConnectorIsADefined() {
+			// Prepare
+			List<Erinnerung> l = new ArrayList<>();
+			when(erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc()).thenReturn(l);
+			// Run & Check
+			assertTrue(unitUnderTest.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin().isEmpty());
+		}
+
+		@Test
+		void addsTheExternalErinnerungObjects_foundInTheExternalErinnerungConnectors() {
+			// Prepare
+			ExternalErinnerung externalErinnerung = mock(ExternalErinnerung.class);
+			ExternalErinnerungConnector connector = mock(ExternalErinnerungConnector.class);
+			List<Erinnerung> l = new ArrayList<>();
+			when(erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc()).thenReturn(l);
+			when(connector.findAllErinnerungen()).thenReturn(List.of(externalErinnerung));
+			externalErinnerungConnectors.add(connector);
+			// Run
+			List<Erinnerung> returned = unitUnderTest.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin();
+			// Check
+			assertSame(externalErinnerung, returned.get(0));
 		}
 	}
 

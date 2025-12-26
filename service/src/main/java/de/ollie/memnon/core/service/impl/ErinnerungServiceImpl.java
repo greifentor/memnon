@@ -9,6 +9,7 @@ import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.core.service.LocalDateService;
+import de.ollie.memnon.core.service.port.connector.ExternalErinnerungConnector;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
 import jakarta.inject.Named;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 	private static final String MSG_ERINNERUNG_NOT_FOUND = "erinnerung id cannot be null!";
 
 	private final ErinnerungPersistencePort erinnerungPersistencePort;
+	private final List<ExternalErinnerungConnector> externalErinnerungConnectors;
 	private final LocalDateService localDateService;
 	private final ServiceConfiguration serviceConfiguration;
 	private final UUIDProvider uuidProvider;
@@ -94,7 +96,14 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	@Override
 	public List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin() {
-		return erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
+		List<Erinnerung> l = erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
+		if (!externalErinnerungConnectors.isEmpty()) {
+			for (ExternalErinnerungConnector connector : externalErinnerungConnectors) {
+				l.addAll(connector.findAllErinnerungen());
+			}
+			// l = l.stream().sorted((e0, e1) -> e0.getNaechsterTermin().compareTo(e1.getNaechsterTermin())).toList();
+		}
+		return l;
 	}
 
 	@Override
