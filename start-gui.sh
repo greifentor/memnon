@@ -1,0 +1,10 @@
+java \
+-Dspring.datasource.url=jdbc:mariadb://localhost:3306/memnon \
+-Dspring.datasource.driverClassName=org.mariadb.jdbc.Driver \
+-Dspring.datasource.username=memnon \
+-Dspring.datasource.password=password \
+-Djdbc.datasource.password=password \
+-Djdbc.datasource.url=jdbc:mariadb://localhost:3306/healthtracker \
+-Djdbc.datasource.username=healthtracker \
+-Dlogging.level.root=INFO \
+-jar gui-swing/target/memnon-gui-swing-0.2.0.jar

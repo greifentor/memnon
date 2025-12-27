@@ -66,10 +66,9 @@ class ListErinnerungCommandTest {
 		void callsPrintStreamCorrectly_whenNoBezugsdatumIsSet() {
 			// Prepare
 			List<Erinnerung> l = List.of(erinnerung);
-			when(erinnerung.getId()).thenReturn(erinnerungId);
 			when(erinnerung.getNaechsterTermin()).thenReturn(NAECHSTER_TERMIN);
 			when(erinnerung.getName()).thenReturn(NAME);
-			when(erinnerungService.ermittleStatus(erinnerungId)).thenReturn(STATUS);
+			when(erinnerungService.ermittleStatus(erinnerung)).thenReturn(STATUS);
 			when(erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin()).thenReturn(l);
 			// Run
 			unitUnderTest.run();
@@ -83,10 +82,9 @@ class ListErinnerungCommandTest {
 			// Prepare
 			List<Erinnerung> l = List.of(erinnerung);
 			when(erinnerung.getBezugsdatum()).thenReturn(BEZUGSDATUM);
-			when(erinnerung.getId()).thenReturn(erinnerungId);
 			when(erinnerung.getNaechsterTermin()).thenReturn(NAECHSTER_TERMIN);
 			when(erinnerung.getName()).thenReturn(NAME);
-			when(erinnerungService.ermittleStatus(erinnerungId)).thenReturn(STATUS);
+			when(erinnerungService.ermittleStatus(erinnerung)).thenReturn(STATUS);
 			when(erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin()).thenReturn(l);
 			// Run
 			unitUnderTest.run();
