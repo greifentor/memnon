@@ -25,3 +25,5 @@ replay_pid*
 /.project
 /test-data.script
 **/target
+/start-gui.sh
+/start-shell.sh
