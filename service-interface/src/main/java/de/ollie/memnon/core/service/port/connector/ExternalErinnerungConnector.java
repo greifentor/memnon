@@ -1,6 +1,6 @@
 package de.ollie.memnon.core.service.port.connector;
 
-import de.ollie.memnon.core.model.BridgeId;
+import de.ollie.memnon.core.model.ConnectorId;
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.ExternalErinnerung;
 import java.util.List;
@@ -40,5 +40,5 @@ public interface ExternalErinnerungConnector {
 	 * @return The id of the bridge (different values necessary when confirmation is activated for the bridge
 	 *         implementation.
 	 */
-	BridgeId getId();
+	ConnectorId getId();
 }

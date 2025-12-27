@@ -11,7 +11,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Generated
 @ToString
-public class BridgeId {
+public class ConnectorId {
 
 	@Getter
 	private UUID uuid;

@@ -7,20 +7,26 @@
 	<parent>
 		<groupId>de.ollie</groupId>
 		<artifactId>memnon</artifactId>
-		<version>0.2.0</version>
+		<version>0.0.1</version>
 	</parent>
 
-	<artifactId>memnon-base-lib</artifactId>
+	<artifactId>memnon-service-interface</artifactId>
 	<packaging>jar</packaging>
 
-	<name>MemNoN (Base-Lib)</name>
-	<description>The base library of the application.</description>
+	<name>MemNoN (Service-Interface)</name>
+	<description>The interface of the service and core module of the application.</description>
 
 	<properties>
 		<plugin.prettier.goal>write</plugin.prettier.goal>
 	</properties>
 
 	<dependencies>
+		<!-- memnon -->
+		<dependency>
+			<groupId>de.ollie</groupId>
+			<artifactId>memnon-base-lib</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

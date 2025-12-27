@@ -9,5 +9,5 @@ import lombok.experimental.Accessors;
 @Generated
 public class ExternalErinnerung extends Erinnerung {
 
-	private BridgeId bridgeId;
+	private ConnectorId connectorId;
 }
