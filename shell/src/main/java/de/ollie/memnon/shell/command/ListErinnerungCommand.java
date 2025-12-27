@@ -25,7 +25,7 @@ public class ListErinnerungCommand {
 					erinnerung.getName(),
 					formatter.format(erinnerung.getNaechsterTermin()),
 					(erinnerung.getBezugsdatum() != null ? formatter.format(erinnerung.getBezugsdatum()) : "-"),
-					erinnerungService.ermittleStatus(erinnerung.getId())
+					erinnerungService.ermittleStatus(erinnerung)
 				)
 			)
 		);

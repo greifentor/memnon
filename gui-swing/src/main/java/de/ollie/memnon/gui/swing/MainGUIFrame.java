@@ -67,7 +67,7 @@ public class MainGUIFrame extends JFrame {
 				label.setFont(new Font("monospaced", Font.BOLD, 12));
 			} else {
 				label.setForeground(
-					colorsForErinnerungStatus.getOrDefault(erinnerungService.ermittleStatus(erinnerung.getId()), Color.PINK)
+					colorsForErinnerungStatus.getOrDefault(erinnerungService.ermittleStatus(erinnerung), Color.PINK)
 				);
 			}
 			return label;
@@ -83,7 +83,7 @@ public class MainGUIFrame extends JFrame {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if (listErinnerungen.getSelectedValue() != null) {
-				erinnerungService.aktualisiereNaechsterTermin(listErinnerungen.getSelectedValue().getId());
+				erinnerungService.aktualisiereNaechsterTermin(listErinnerungen.getSelectedValue());
 				listErinnerungen.setListData(
 					erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin().toArray(new Erinnerung[0])
 				);

@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>de.ollie</groupId>
 		<artifactId>memnon</artifactId>
-		<version>0.0.1</version>
+		<version>0.2.0</version>
 	</parent>
 
 	<artifactId>memnon-shell</artifactId>
@@ -26,18 +26,18 @@
 			<groupId>de.ollie</groupId>
 			<artifactId>memnon-jpa-persistence</artifactId>
 			<scope>runtime</scope>
-			<version>0.0.1</version>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.ollie</groupId>
 			<artifactId>memnon-service</artifactId>
 			<scope>runtime</scope>
-			<version>0.0.1</version>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.ollie</groupId>
 			<artifactId>memnon-service-interface</artifactId>
-			<version>0.0.1</version>
+			<version>0.2.0</version>
 		</dependency>
 		<!-- Spring -->
 		<dependency>

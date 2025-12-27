@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ErinnerungService {
-	Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId);
+	Optional<LocalDate> aktualisiereNaechsterTermin(Erinnerung erinnerung);
 
-	ErinnerungStatus ermittleStatus(ErinnerungId erinnerungId);
+	ErinnerungStatus ermittleStatus(Erinnerung erinnerung);
 
 	ErinnerungId erzeugeErinnerung(String name, LocalDate ersterTermin, Wiederholung wiederholung, LocalDate bezugsdatum);
 

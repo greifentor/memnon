@@ -3,17 +3,23 @@ package de.ollie.memnon.core.service.impl;
 import static de.ollie.memnon.util.Check.ensure;
 
 import de.ollie.memnon.configuration.ServiceConfiguration;
+import de.ollie.memnon.core.model.ConnectorId;
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.ErinnerungStatus;
+import de.ollie.memnon.core.model.ExternalErinnerung;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.core.service.LocalDateService;
+import de.ollie.memnon.core.service.port.connector.ExternalErinnerungConnector;
 import de.ollie.memnon.core.service.port.persistence.ErinnerungPersistencePort;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -24,30 +30,47 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 	private static final String MSG_ERINNERUNG_NOT_FOUND = "erinnerung id cannot be null!";
 
 	private final ErinnerungPersistencePort erinnerungPersistencePort;
+	private final List<ExternalErinnerungConnector> externalErinnerungConnectors;
 	private final LocalDateService localDateService;
 	private final ServiceConfiguration serviceConfiguration;
 	private final UUIDProvider uuidProvider;
 
-	@Override
-	public Optional<LocalDate> aktualisiereNaechsterTermin(ErinnerungId erinnerungId) {
-		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
-		return erinnerungPersistencePort
-			.findById(erinnerungId)
-			.filter(erinnerung -> erinnerung.getWiederholung() != null)
-			.map(erinnerung -> {
-				LocalDate newNaechsterTermin = erinnerung.berechneNaechsterTermin();
-				erinnerung.setNaechsterTermin(newNaechsterTermin);
-				erinnerungPersistencePort.save(erinnerung);
-				return newNaechsterTermin;
-			});
+	private Map<ConnectorId, ExternalErinnerungConnector> connectorsById = new HashMap<>();
+
+	@PostConstruct
+	void postConstruct() {
+		externalErinnerungConnectors.forEach(connector -> connectorsById.put(connector.getId(), connector));
 	}
 
 	@Override
-	public ErinnerungStatus ermittleStatus(ErinnerungId erinnerungId) {
-		ensure(erinnerungId != null, MSG_ERINNERUNG_NOT_FOUND);
-		Erinnerung erinnerung = erinnerungPersistencePort
-			.findById(erinnerungId)
-			.orElseThrow(() -> new NoSuchElementException(MSG_ERINNERUNG_NOT_FOUND));
+	public Optional<LocalDate> aktualisiereNaechsterTermin(Erinnerung erinnerung) {
+		ensure(erinnerung != null, MSG_ERINNERUNG_NOT_FOUND);
+		return erinnerungPersistencePort
+			.findById(erinnerung.getId())
+			.map(this::updateToNaechsterTermin)
+			.orElse(confirmExternalErinnerung(erinnerung));
+	}
+
+	private Optional<LocalDate> updateToNaechsterTermin(Erinnerung erinnerung) {
+		if (erinnerung.getWiederholung() == null) {
+			return Optional.empty();
+		}
+		LocalDate newNaechsterTermin = erinnerung.berechneNaechsterTermin();
+		erinnerung.setNaechsterTermin(newNaechsterTermin);
+		erinnerungPersistencePort.save(erinnerung);
+		return Optional.of(newNaechsterTermin);
+	}
+
+	private Optional<LocalDate> confirmExternalErinnerung(Erinnerung erinnerung) {
+		if (erinnerung instanceof ExternalErinnerung externalErinnerung) {
+			connectorsById.get(externalErinnerung.getConnectorId()).confirm(erinnerung.getId());
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public ErinnerungStatus ermittleStatus(Erinnerung erinnerung) {
+		ensure(erinnerung != null, MSG_ERINNERUNG_NOT_FOUND);
 		LocalDate now = localDateService.now();
 		if (now.isAfter(erinnerung.getNaechsterTermin())) {
 			return ErinnerungStatus.VERPASST;
@@ -94,7 +117,15 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	@Override
 	public List<Erinnerung> holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin() {
-		return erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
+		List<Erinnerung> l = erinnerungPersistencePort.findAllOrderedByNaechsterTerminAsc();
+		if (!externalErinnerungConnectors.isEmpty()) {
+			l = new ArrayList<>(l);
+			for (ExternalErinnerungConnector connector : externalErinnerungConnectors) {
+				l.addAll(connector.findAllErinnerungen());
+			}
+			l = l.stream().sorted((e0, e1) -> e0.getNaechsterTermin().compareTo(e1.getNaechsterTermin())).toList();
+		}
+		return l;
 	}
 
 	@Override

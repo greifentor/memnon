@@ -7,20 +7,32 @@
 	<parent>
 		<groupId>de.ollie</groupId>
 		<artifactId>memnon</artifactId>
-		<version>0.2.0</version>
+		<version>0.0.1</version>
 	</parent>
 
-	<artifactId>memnon-base-lib</artifactId>
+	<artifactId>memnon-service</artifactId>
 	<packaging>jar</packaging>
 
-	<name>MemNoN (Base-Lib)</name>
-	<description>The base library of the application.</description>
+	<name>MemNoN (Service)</name>
+	<description>The service and core module of the application.</description>
 
 	<properties>
 		<plugin.prettier.goal>write</plugin.prettier.goal>
 	</properties>
 
 	<dependencies>
+		<!-- memnon -->
+		<dependency>
+			<groupId>de.ollie</groupId>
+			<artifactId>memnon-service-interface</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>de.ollie</groupId>
+			<artifactId>memnon-jpa-persistence</artifactId>
+			<scope>test</scope>
+			<version>0.0.1</version>
+		</dependency>
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -29,10 +41,6 @@
 		<dependency>
 			<groupId>jakarta.inject</groupId>
 			<artifactId>jakarta.inject-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.annotation</groupId>
-			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
