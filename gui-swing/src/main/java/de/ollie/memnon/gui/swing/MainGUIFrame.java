@@ -62,7 +62,7 @@ public class MainGUIFrame extends JFrame {
 		) {
 			JLabel label = new JLabel();
 			label.setFont(new Font("monospaced", Font.PLAIN, 12));
-			label.setText(String.format("%-40s %10s", erinnerung.getName(), erinnerung.getNaechsterTermin()));
+			label.setText(String.format(" %10s %s", erinnerung.getNaechsterTermin(), erinnerung.getName()));
 			if (isSelected) {
 				label.setFont(new Font("monospaced", Font.BOLD, 12));
 			} else {
