@@ -41,6 +41,12 @@
 		</dependency>
 		<dependency>
 			<groupId>de.ollie</groupId>
+			<artifactId>memnon-agrippa-connector</artifactId>
+			<version>1.0.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.ollie</groupId>
 			<artifactId>memnon-health-tracker-connector</artifactId>
 			<version>1.0.0</version>
 			<scope>runtime</scope>

@@ -161,6 +161,7 @@ class ErinnerungServiceImplTest {
 			ConnectorId connectorId = mock(ConnectorId.class);
 			ExternalErinnerung erinnerung = mock(ExternalErinnerung.class);
 			externalErinnerungConnectors.add(connector);
+			when(connector.canBeConfirmed()).thenReturn(true);
 			when(connector.getId()).thenReturn(connectorId);
 			when(erinnerung.getId()).thenReturn(erinnerungId);
 			when(erinnerung.getConnectorId()).thenReturn(connectorId);

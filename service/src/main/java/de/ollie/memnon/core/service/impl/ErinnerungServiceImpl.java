@@ -63,7 +63,10 @@ class ErinnerungServiceImpl implements ErinnerungService { // NO_UCD
 
 	private Optional<LocalDate> confirmExternalErinnerung(Erinnerung erinnerung) {
 		if (erinnerung instanceof ExternalErinnerung externalErinnerung) {
-			connectorsById.get(externalErinnerung.getConnectorId()).confirm(erinnerung.getId());
+			ExternalErinnerungConnector connector = connectorsById.get(externalErinnerung.getConnectorId());
+			if (connector.canBeConfirmed()) {
+				connector.confirm(erinnerung.getId());
+			}
 		}
 		return Optional.empty();
 	}
