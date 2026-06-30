@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
+import de.ollie.memnon.core.model.WiederholungMonatlich;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class WiederholungServiceImplTest {
 		@Test
 		void returnsAListOfWiederholung_withCorrectElements() {
 			// Prepare
-			List<Wiederholung> expected = List.of(new WiederholungJaehrlich());
+			List<Wiederholung> expected = List.of(new WiederholungJaehrlich(), new WiederholungMonatlich());
 			// Run
 			List<Wiederholung> returned = unitUnderTest.holeAlleWiederholungenAufsteigendSortiertNachName();
 			// Check

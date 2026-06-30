@@ -3,6 +3,7 @@ package de.ollie.memnon.core.service.impl;
 import de.ollie.memnon.core.model.Wiederholung;
 import de.ollie.memnon.core.service.WiederholungService;
 import jakarta.inject.Named;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,12 +13,14 @@ class WiederholungServiceImpl implements WiederholungService { // NO_UCD
 
 	private static final Map<String, Wiederholung> WIEDERHOLUNGEN = Map.of(
 		WIEDERHOLUNG_JAEHRLICH.getName(),
-		WIEDERHOLUNG_JAEHRLICH
+		WIEDERHOLUNG_JAEHRLICH,
+		WIEDERHOLUNG_MONATLICH.getName(),
+		WIEDERHOLUNG_MONATLICH
 	);
 
 	@Override
 	public List<Wiederholung> holeAlleWiederholungenAufsteigendSortiertNachName() {
-		return List.of(WIEDERHOLUNGEN.values().toArray(new Wiederholung[WIEDERHOLUNGEN.size()]));
+		return WIEDERHOLUNGEN.values().stream().sorted(Comparator.comparing(Wiederholung::getName)).toList();
 	}
 
 	@Override
