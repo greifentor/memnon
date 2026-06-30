@@ -31,7 +31,7 @@ public class ErinnerungInterpreter { // NO_UCD
 			defaultValue = "null"
 		) String bezugsdatum,
 		@ShellOption(
-			help = "Name of the wiederholung (e.g. 'Jährlich', 'Monatlich').",
+			help = "Name of the wiederholung (e.g. 'Jährlich', 'Monatlich', 'Wöchentlich').",
 			value = "wiederholung",
 			defaultValue = WiederholungJaehrlich.NAME
 		) String wiederholung

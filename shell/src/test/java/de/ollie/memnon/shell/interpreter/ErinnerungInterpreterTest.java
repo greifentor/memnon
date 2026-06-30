@@ -66,6 +66,21 @@ class ErinnerungInterpreterTest {
 			// Check
 			assertEquals(RETURN_STRING, returned);
 		}
+
+		@Test
+		void returnsTheCorrectString_passingAWeeklyWiederholung() {
+			// Prepare
+			String bezugsdatumString = "06.02.1998";
+			String ersterTerminString = "06.02.1999";
+			String wiederholung = "Wöchentlich";
+			LocalDate bezugsdatum = LocalDate.of(1998, 2, 6);
+			LocalDate ersterTermin = LocalDate.of(1999, 2, 6);
+			when(addErinnerungCommand.run(NAME, ersterTermin, bezugsdatum, wiederholung)).thenReturn(RETURN_STRING);
+			// Run
+			String returned = unitUnderTest.add(NAME, ersterTerminString, bezugsdatumString, wiederholung);
+			// Check
+			assertEquals(RETURN_STRING, returned);
+		}
 	}
 
 	@Nested

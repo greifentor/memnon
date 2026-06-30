@@ -7,6 +7,7 @@ import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
 import de.ollie.memnon.core.model.WiederholungMonatlich;
+import de.ollie.memnon.core.model.WiederholungWoechentlich;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -67,5 +68,21 @@ class ErinnerungDBORepositoryITest {
 		// Check
 		assertTrue(result.isPresent());
 		assertTrue(result.get().getWiederholung() instanceof WiederholungMonatlich);
+	}
+
+	@Test
+	void persistsAndReadsBackAWeeklyWiederholung() {
+		// Prepare
+		ErinnerungId id = unitUnderTest.erzeugeErinnerung(
+			"woechentlich-0",
+			LocalDate.now(),
+			new WiederholungWoechentlich(),
+			LocalDate.now().minusWeeks(20)
+		);
+		// Run
+		Optional<Erinnerung> result = unitUnderTest.holeErinnerungZuId(id);
+		// Check
+		assertTrue(result.isPresent());
+		assertTrue(result.get().getWiederholung() instanceof WiederholungWoechentlich);
 	}
 }
