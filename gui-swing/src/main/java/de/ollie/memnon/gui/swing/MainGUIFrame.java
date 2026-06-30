@@ -32,6 +32,8 @@ public class MainGUIFrame extends JFrame {
 	private final ErinnerungService erinnerungService;
 	private final GUIConfiguration guiConfiguration;
 
+	private JList<Erinnerung> listErinnerungen;
+
 	@RequiredArgsConstructor
 	private static class ErinnerungListCellRenderer implements ListCellRenderer<Erinnerung> {
 
@@ -94,10 +96,8 @@ public class MainGUIFrame extends JFrame {
 	@PostConstruct
 	void postConstruct() {
 		setTitle("MemNoN");
-		JList<Erinnerung> listErinnerungen = new JList<>();
-		listErinnerungen.setListData(
-			erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin().toArray(new Erinnerung[0])
-		);
+		listErinnerungen = new JList<>();
+		aktualisiereListenanzeige();
 		listErinnerungen.setCellRenderer(new ErinnerungListCellRenderer(erinnerungService));
 		listErinnerungen.addListSelectionListener(new ErinnerungListSelectionListener(listErinnerungen, erinnerungService));
 		JPanel mainPanel = new JPanel(
@@ -111,12 +111,35 @@ public class MainGUIFrame extends JFrame {
 	}
 
 	private JPanel createButtonPanel() {
-		JPanel buttonPanel = new JPanel(
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(createLeftButtonPanel(), BorderLayout.WEST);
+		buttonPanel.add(createRightButtonPanel(), BorderLayout.EAST);
+		return buttonPanel;
+	}
+
+	private JPanel createLeftButtonPanel() {
+		JPanel leftPanel = new JPanel(
+			new FlowLayout(FlowLayout.LEFT, guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
+		);
+		JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(e -> aktualisiereListenanzeige());
+		leftPanel.add(updateButton);
+		return leftPanel;
+	}
+
+	private void aktualisiereListenanzeige() {
+		listErinnerungen.setListData(
+			erinnerungService.holeAlleErinnerungenAufsteigendSortiertNachNaechsterTermin().toArray(new Erinnerung[0])
+		);
+	}
+
+	private JPanel createRightButtonPanel() {
+		JPanel rightPanel = new JPanel(
 			new FlowLayout(FlowLayout.RIGHT, guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
 		);
 		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(e -> System.exit(SpringApplication.exit(context)));
-		buttonPanel.add(closeButton);
-		return buttonPanel;
+		rightPanel.add(closeButton);
+		return rightPanel;
 	}
 }
