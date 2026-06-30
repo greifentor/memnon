@@ -35,18 +35,34 @@ class ErinnerungInterpreterTest {
 	private ErinnerungInterpreter unitUnderTest;
 
 	@Nested
-	class add_String_String_String {
+	class add_String_String_String_String {
 
 		@Test
 		void returnsTheCorrectString() {
 			// Prepare
 			String bezugsdatumString = "06.02.1998";
 			String ersterTerminString = "06.02.1999";
+			String wiederholung = "Jährlich";
 			LocalDate bezugsdatum = LocalDate.of(1998, 2, 6);
 			LocalDate ersterTermin = LocalDate.of(1999, 2, 6);
-			when(addErinnerungCommand.run(NAME, ersterTermin, bezugsdatum)).thenReturn(RETURN_STRING);
+			when(addErinnerungCommand.run(NAME, ersterTermin, bezugsdatum, wiederholung)).thenReturn(RETURN_STRING);
 			// Run
-			String returned = unitUnderTest.add(NAME, ersterTerminString, bezugsdatumString);
+			String returned = unitUnderTest.add(NAME, ersterTerminString, bezugsdatumString, wiederholung);
+			// Check
+			assertEquals(RETURN_STRING, returned);
+		}
+
+		@Test
+		void returnsTheCorrectString_passingAMonthlyWiederholung() {
+			// Prepare
+			String bezugsdatumString = "06.02.1998";
+			String ersterTerminString = "06.02.1999";
+			String wiederholung = "Monatlich";
+			LocalDate bezugsdatum = LocalDate.of(1998, 2, 6);
+			LocalDate ersterTermin = LocalDate.of(1999, 2, 6);
+			when(addErinnerungCommand.run(NAME, ersterTermin, bezugsdatum, wiederholung)).thenReturn(RETURN_STRING);
+			// Run
+			String returned = unitUnderTest.add(NAME, ersterTerminString, bezugsdatumString, wiederholung);
 			// Check
 			assertEquals(RETURN_STRING, returned);
 		}

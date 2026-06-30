@@ -2,6 +2,7 @@ package de.ollie.memnon.shell.interpreter;
 
 import static de.ollie.memnon.util.Check.ensure;
 
+import de.ollie.memnon.core.model.WiederholungJaehrlich;
 import de.ollie.memnon.shell.command.AddErinnerungCommand;
 import de.ollie.memnon.shell.command.ListErinnerungCommand;
 import de.ollie.memnon.shell.command.RemoveErinnerungCommand;
@@ -28,12 +29,18 @@ public class ErinnerungInterpreter { // NO_UCD
 			help = "A bezugsdatum for the erinnerung.",
 			value = "bezugsdatum",
 			defaultValue = "null"
-		) String bezugsdatum
+		) String bezugsdatum,
+		@ShellOption(
+			help = "Name of the wiederholung (e.g. 'Jährlich', 'Monatlich').",
+			value = "wiederholung",
+			defaultValue = WiederholungJaehrlich.NAME
+		) String wiederholung
 	) {
 		return addErinnerungCommand.run(
 			name,
 			LocalDate.parse(ersterTermin, DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-			LocalDate.parse(bezugsdatum, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+			LocalDate.parse(bezugsdatum, DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+			wiederholung
 		);
 	}
 

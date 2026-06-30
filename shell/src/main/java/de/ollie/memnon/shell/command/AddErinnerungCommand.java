@@ -4,7 +4,6 @@ import static de.ollie.memnon.util.Check.ensure;
 
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.Wiederholung;
-import de.ollie.memnon.core.model.WiederholungJaehrlich;
 import de.ollie.memnon.core.service.ErinnerungService;
 import de.ollie.memnon.core.service.WiederholungService;
 import jakarta.inject.Named;
@@ -18,10 +17,10 @@ public class AddErinnerungCommand {
 	private final ErinnerungService erinnerungService;
 	private final WiederholungService wiederholungService;
 
-	public String run(String name, LocalDate ersterTermin, LocalDate bezugsdatum) {
+	public String run(String name, LocalDate ersterTermin, LocalDate bezugsdatum, String wiederholungName) {
 		ensure(ersterTermin != null, "erster termin cannot be null!");
 		ensure(name != null, "name cannot be null!");
-		Wiederholung wiederholung = wiederholungService.holeWiederholungMitNamen(WiederholungJaehrlich.NAME).orElse(null);
+		Wiederholung wiederholung = wiederholungService.holeWiederholungMitNamen(wiederholungName).orElse(null);
 		ErinnerungId erzeugteErinnerungId = erinnerungService.erzeugeErinnerung(
 			name,
 			ersterTermin,

@@ -39,16 +39,22 @@ class AddErinnerungCommandTest {
 	private AddErinnerungCommand unitUnderTest;
 
 	@Nested
-	class run_String_LocalDate_LocalDate {
+	class run_String_LocalDate_LocalDate_String {
 
 		@Test
 		void throwsAnException_passingANullValueAsErsterTermin() {
-			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.run(NAME, null, BEZUGSDATUM));
+			assertThrows(
+				IllegalArgumentException.class,
+				() -> unitUnderTest.run(NAME, null, BEZUGSDATUM, WiederholungJaehrlich.NAME)
+			);
 		}
 
 		@Test
 		void throwsAnException_passingANullValueAsName() {
-			assertThrows(IllegalArgumentException.class, () -> unitUnderTest.run(null, ERSTER_TERMIN, BEZUGSDATUM));
+			assertThrows(
+				IllegalArgumentException.class,
+				() -> unitUnderTest.run(null, ERSTER_TERMIN, BEZUGSDATUM, WiederholungJaehrlich.NAME)
+			);
 		}
 
 		@Test
@@ -68,7 +74,7 @@ class AddErinnerungCommandTest {
 			when(wiederholungService.holeWiederholungMitNamen(WiederholungJaehrlich.NAME))
 				.thenReturn(Optional.of(WiederholungService.WIEDERHOLUNG_JAEHRLICH));
 			// Run
-			String returned = unitUnderTest.run(NAME, ERSTER_TERMIN, BEZUGSDATUM);
+			String returned = unitUnderTest.run(NAME, ERSTER_TERMIN, BEZUGSDATUM, WiederholungJaehrlich.NAME);
 			// Check
 			assertEquals(expected, returned);
 		}
@@ -81,7 +87,7 @@ class AddErinnerungCommandTest {
 			when(erinnerungService.erzeugeErinnerung(NAME, ERSTER_TERMIN, null, BEZUGSDATUM)).thenReturn(erinnerungId);
 			when(wiederholungService.holeWiederholungMitNamen(WiederholungJaehrlich.NAME)).thenReturn(Optional.empty());
 			// Run
-			String returned = unitUnderTest.run(NAME, ERSTER_TERMIN, BEZUGSDATUM);
+			String returned = unitUnderTest.run(NAME, ERSTER_TERMIN, BEZUGSDATUM, WiederholungJaehrlich.NAME);
 			// Check
 			assertEquals(expected, returned);
 		}

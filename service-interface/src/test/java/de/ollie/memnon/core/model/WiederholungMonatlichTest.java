@@ -58,6 +58,19 @@ class WiederholungMonatlichTest {
 		}
 
 		@Test
+		void advancesToTheNextMonth_whenBezugsdatumAndNaechsterTerminAreEqual() {
+			// Prepare
+			LocalDate date = LocalDate.of(2026, 6, 1);
+			when(erinnerung.getBezugsdatum()).thenReturn(date);
+			when(erinnerung.getNaechsterTermin()).thenReturn(date);
+			// Run
+			LocalDate returned = unitUnderTest.berechneNaechsterTermin(erinnerung);
+			// Check
+			verify(erinnerung, times(1)).setNaechsterTermin(LocalDate.of(2026, 7, 1));
+			assertEquals(LocalDate.of(2026, 7, 1), returned);
+		}
+
+		@Test
 		void returnsTheNewNaechsterTermin() {
 			// Prepare
 			when(erinnerung.getBezugsdatum()).thenReturn(BEZUGSDATUM);

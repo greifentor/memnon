@@ -3,10 +3,13 @@ package de.ollie.memnon.core.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungId;
 import de.ollie.memnon.core.model.WiederholungJaehrlich;
+import de.ollie.memnon.core.model.WiederholungMonatlich;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +51,21 @@ class ErinnerungDBORepositoryITest {
 		// Check
 		assertTrue(!result.isEmpty());
 		assertEquals(id0, result.get(0));
+	}
+
+	@Test
+	void persistsAndReadsBackAMonthlyWiederholung() {
+		// Prepare
+		ErinnerungId id = unitUnderTest.erzeugeErinnerung(
+			"monatlich-0",
+			LocalDate.now(),
+			new WiederholungMonatlich(),
+			LocalDate.now().minusMonths(20)
+		);
+		// Run
+		Optional<Erinnerung> result = unitUnderTest.holeErinnerungZuId(id);
+		// Check
+		assertTrue(result.isPresent());
+		assertTrue(result.get().getWiederholung() instanceof WiederholungMonatlich);
 	}
 }
