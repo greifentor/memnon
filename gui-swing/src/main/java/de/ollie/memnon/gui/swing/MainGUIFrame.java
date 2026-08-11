@@ -11,8 +11,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,17 +34,7 @@ public class MainGUIFrame extends JFrame {
 	private final GUIConfiguration guiConfiguration;
 	private final WiederholungService wiederholungService;
 
-	private final List<MainGUIFrameObserver> observers = new ArrayList<>();
-
 	private JList<Erinnerung> listErinnerungen;
-
-	public void addObserver(MainGUIFrameObserver observer) {
-		observers.add(observer);
-	}
-
-	public void removeObserver(MainGUIFrameObserver observer) {
-		observers.remove(observer);
-	}
 
 	@RequiredArgsConstructor
 	private static class ErinnerungListCellRenderer implements ListCellRenderer<Erinnerung> {
@@ -138,12 +126,6 @@ public class MainGUIFrame extends JFrame {
 		JButton neuButton = new JButton("Neu");
 		neuButton.addActionListener(e -> oeffneErinnerungAnlegenDialog());
 		leftPanel.add(neuButton);
-		JButton updateButton = new JButton("Update");
-		updateButton.addActionListener(e -> aktualisiereListenanzeige());
-		leftPanel.add(updateButton);
-		JButton observerButton = new JButton("Observer");
-		observerButton.addActionListener(e -> benachrichtigeObserver());
-		leftPanel.add(observerButton);
 		return leftPanel;
 	}
 
@@ -156,10 +138,6 @@ public class MainGUIFrame extends JFrame {
 		);
 		dialog.setVisible(true);
 		dialog.getErzeugteErinnerungId().ifPresent(id -> aktualisiereListenanzeige());
-	}
-
-	private void benachrichtigeObserver() {
-		observers.forEach(MainGUIFrameObserver::observerButtonBetaetigt);
 	}
 
 	private void aktualisiereListenanzeige() {
