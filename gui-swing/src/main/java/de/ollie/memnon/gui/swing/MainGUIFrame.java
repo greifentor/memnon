@@ -3,6 +3,7 @@ package de.ollie.memnon.gui.swing;
 import de.ollie.memnon.core.model.Erinnerung;
 import de.ollie.memnon.core.model.ErinnerungStatus;
 import de.ollie.memnon.core.service.ErinnerungService;
+import de.ollie.memnon.core.service.WiederholungService;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
 import java.awt.BorderLayout;
@@ -10,6 +11,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,8 +34,19 @@ public class MainGUIFrame extends JFrame {
 	private final ApplicationContext context;
 	private final ErinnerungService erinnerungService;
 	private final GUIConfiguration guiConfiguration;
+	private final WiederholungService wiederholungService;
+
+	private final List<MainGUIFrameObserver> observers = new ArrayList<>();
 
 	private JList<Erinnerung> listErinnerungen;
+
+	public void addObserver(MainGUIFrameObserver observer) {
+		observers.add(observer);
+	}
+
+	public void removeObserver(MainGUIFrameObserver observer) {
+		observers.remove(observer);
+	}
 
 	@RequiredArgsConstructor
 	private static class ErinnerungListCellRenderer implements ListCellRenderer<Erinnerung> {
@@ -121,10 +135,31 @@ public class MainGUIFrame extends JFrame {
 		JPanel leftPanel = new JPanel(
 			new FlowLayout(FlowLayout.LEFT, guiConfiguration.getHorizontalGap(), guiConfiguration.getVerticalGap())
 		);
+		JButton neuButton = new JButton("Neu");
+		neuButton.addActionListener(e -> oeffneErinnerungAnlegenDialog());
+		leftPanel.add(neuButton);
 		JButton updateButton = new JButton("Update");
 		updateButton.addActionListener(e -> aktualisiereListenanzeige());
 		leftPanel.add(updateButton);
+		JButton observerButton = new JButton("Observer");
+		observerButton.addActionListener(e -> benachrichtigeObserver());
+		leftPanel.add(observerButton);
 		return leftPanel;
+	}
+
+	private void oeffneErinnerungAnlegenDialog() {
+		ErinnerungAnlegenDialog dialog = new ErinnerungAnlegenDialog(
+			this,
+			erinnerungService,
+			wiederholungService,
+			guiConfiguration
+		);
+		dialog.setVisible(true);
+		dialog.getErzeugteErinnerungId().ifPresent(id -> aktualisiereListenanzeige());
+	}
+
+	private void benachrichtigeObserver() {
+		observers.forEach(MainGUIFrameObserver::observerButtonBetaetigt);
 	}
 
 	private void aktualisiereListenanzeige() {
