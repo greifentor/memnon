@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -126,6 +127,10 @@ public class MainGUIFrame extends JFrame {
 		JButton neuButton = new JButton("Neu");
 		neuButton.addActionListener(e -> oeffneErinnerungAnlegenDialog());
 		leftPanel.add(neuButton);
+		leftPanel.add(new JSeparator(JSeparator.VERTICAL));
+		JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(e -> aktualisiereListenanzeige());
+		leftPanel.add(updateButton);
 		return leftPanel;
 	}
 
